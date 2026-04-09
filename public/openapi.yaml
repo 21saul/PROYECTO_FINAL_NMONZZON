@@ -1,0 +1,1113 @@
+openapi: 3.0.3
+info:
+  title: nmonzzon Studio API
+  description: |
+    API REST de CodeIgniter 4 para catálogo, e-commerce, encargos de retrato, reservas de arte en vivo y panel admin.
+    Las respuestas de éxito suelen seguir `{ "status": "success", "message": string, "data": ... }`.
+    Los errores: `{ "status": "error", "message": string, "errors"?: object }`.
+  version: "1.0.0"
+  contact:
+    name: nmonzzon Studio
+
+servers:
+  - url: "{baseUrl}"
+    description: Sustituye por el origen de tu entorno (p. ej. https://nmzonzzonstudio.ddev.site)
+    variables:
+      baseUrl:
+        default: https://localhost
+
+tags:
+  - name: Auth
+    description: Registro, login JWT, perfil y recuperación de contraseña
+  - name: Catalog
+    description: Lectura pública de catálogo y contenidos
+  - name: Contact & Chatbot
+  - name: Live art
+  - name: Portrait orders
+  - name: Shop orders
+  - name: Coupons
+  - name: Webhooks & cron
+  - name: Settings
+  - name: Admin
+    description: Requiere JWT con role `admin`; si no, 403
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token emitido en POST /api/auth/login o /api/auth/register (access_token)
+
+  schemas:
+    ApiSuccess:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data: {}
+    ApiError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties: true
+    RegisterRequest:
+      type: object
+      required: [name, email, password, password_confirm]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 100 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        password_confirm: { type: string }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token: { type: string }
+    PortraitOrderCreate:
+      type: object
+      required: [portrait_style_id, portrait_size_id, num_figures]
+      properties:
+        portrait_style_id: { type: integer }
+        portrait_size_id: { type: integer }
+        num_figures: { type: integer, minimum: 1, maximum: 10 }
+        with_frame: { type: boolean }
+        frame_type: { type: string, maxLength: 100 }
+        client_notes: { type: string, maxLength: 2000 }
+    ShopOrderCreate:
+      type: object
+      required: [items, shipping_name, shipping_address, shipping_city, shipping_postal_code, shipping_country]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [product_id, quantity]
+            properties:
+              product_id: { type: integer }
+              variant_id: { type: integer, nullable: true }
+              quantity: { type: integer, minimum: 1 }
+        shipping_name: { type: string }
+        shipping_address: { type: string }
+        shipping_city: { type: string }
+        shipping_postal_code: { type: string }
+        shipping_country: { type: string }
+        shipping_phone: { type: string }
+        coupon_code: { type: string }
+        notes: { type: string }
+    LiveArtBookingCreate:
+      type: object
+      required: [contact_name, contact_email, event_date, event_location, event_city, event_type]
+      properties:
+        contact_name: { type: string, maxLength: 100 }
+        contact_email: { type: string, format: email }
+        contact_phone: { type: string }
+        event_date: { type: string, format: date }
+        event_start_time: { type: string }
+        event_end_time: { type: string }
+        event_location: { type: string }
+        event_city: { type: string }
+        event_postal_code: { type: string }
+        event_type:
+          type: string
+          enum: [wedding, corporate, birthday, festival, private, other]
+        num_guests: { type: integer }
+        num_portraits: { type: integer }
+        travel_distance_km: { type: number, format: float }
+        special_requirements: { type: string }
+    ContactCreate:
+      type: object
+      required: [name, email, subject, message, category]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        subject: { type: string }
+        message: { type: string }
+        category:
+          type: string
+          enum: [general, portrait, live_art, branding, design, products, other]
+    ChatbotMessage:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string, maxLength: 500 }
+    CouponValidate:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string }
+    PortraitStatus:
+      type: string
+      enum: [quote, accepted, photo_received, in_progress, revision, delivered, completed, cancelled]
+
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Alta de cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201":
+          description: Tokens y usuario
+        "422":
+          description: Validación
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200": { description: access_token y refresh_token }
+        "401": { description: Credenciales inválidas }
+
+  /api/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Renovar access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RefreshRequest" }
+      responses:
+        "200": { description: Nuevo access_token }
+        "401": { description: Refresh inválido o revocado }
+
+  /api/auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Solicitar enlace de restablecimiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200": { description: OK (mensaje genérico por seguridad) }
+
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Restablecer contraseña con token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: { type: string }
+                password: { type: string }
+                password_confirm: { type: string }
+      responses:
+        "200": { description: OK }
+        "422": { description: Error validación }
+
+  /api/auth/profile:
+    get:
+      tags: [Auth]
+      security: [{ bearerAuth: [] }]
+      summary: Perfil del usuario autenticado
+      responses:
+        "200": { description: Datos usuario }
+        "401": { description: Sin token }
+    put:
+      tags: [Auth]
+      security: [{ bearerAuth: [] }]
+      summary: Actualizar perfil (name, phone, avatar)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                phone: { type: string }
+                avatar: { type: string }
+      responses:
+        "200": { description: OK }
+        "401": { description: Sin token }
+
+  /api/auth/logout:
+    post:
+      tags: [Auth]
+      security: [{ bearerAuth: [] }]
+      summary: Revocar refresh tokens del usuario
+      responses:
+        "200": { description: OK }
+
+  /api/categories:
+    get:
+      tags: [Catalog]
+      summary: Listar categorías (portfolio)
+      responses:
+        "200": { description: Lista }
+
+  /api/categories/{id}:
+    get:
+      tags: [Catalog]
+      summary: Detalle categoría
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/categories:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Crear categoría
+      responses:
+        "201": { description: Creado }
+        "403": { description: No admin }
+
+  /api/admin/categories/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/portrait-styles:
+    get:
+      tags: [Catalog]
+      summary: Estilos de retrato
+      responses:
+        "200": { description: Lista }
+
+  /api/portrait-styles/{id}:
+    get:
+      tags: [Catalog]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/portrait-styles:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Crear estilo
+      responses:
+        "201": { description: OK }
+
+  /api/admin/portrait-styles/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/portrait-sizes:
+    get:
+      tags: [Catalog]
+      summary: Tamaños de retrato
+      responses:
+        "200": { description: Lista }
+
+  /api/products:
+    get:
+      tags: [Catalog]
+      summary: Productos tienda
+      responses:
+        "200": { description: Lista }
+
+  /api/products/{slug}:
+    get:
+      tags: [Catalog]
+      summary: Detalle público por slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/products:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Crear producto
+      responses:
+        "201": { description: OK }
+
+  /api/admin/products/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/products/{productId}/images:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Subir imagen de producto (multipart según implementación)
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "201": { description: OK }
+
+  /api/admin/products/{productId}/images/{imageId}:
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: imageId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/portfolio:
+    get:
+      tags: [Catalog]
+      summary: Obras portfolio
+      responses:
+        "200": { description: Lista }
+
+  /api/portfolio/{slug}:
+    get:
+      tags: [Catalog]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/portfolio:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Crear obra
+      responses:
+        "201": { description: OK }
+
+  /api/admin/portfolio/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/branding:
+    get:
+      tags: [Catalog]
+      summary: Proyectos branding
+      responses:
+        "200": { description: Lista }
+
+  /api/branding/{slug}:
+    get:
+      tags: [Catalog]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/branding:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: OK }
+
+  /api/admin/branding/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/branding/{id}/images:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "201": { description: OK }
+
+  /api/design:
+    get:
+      tags: [Catalog]
+      responses:
+        "200": { description: Lista }
+
+  /api/design/{slug}:
+    get:
+      tags: [Catalog]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/design:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: OK }
+
+  /api/admin/design/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/design/{id}/images:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "201": { description: OK }
+
+  /api/events:
+    get:
+      tags: [Catalog]
+      responses:
+        "200": { description: Lista }
+
+  /api/events/{slug}:
+    get:
+      tags: [Catalog]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/events:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: OK }
+
+  /api/admin/events/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/events/{id}/images:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "201": { description: OK }
+
+  /api/testimonials:
+    get:
+      tags: [Catalog]
+      summary: Listado público (testimonios activos)
+      responses:
+        "200": { description: OK }
+
+  /api/admin/testimonials:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Listado completo (admin)
+      responses:
+        "200": { description: OK }
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: OK }
+
+  /api/admin/testimonials/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/contact:
+    post:
+      tags: [Contact & Chatbot]
+      summary: Enviar mensaje de contacto (rate limit por IP)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContactCreate" }
+      responses:
+        "200": { description: OK }
+        "422": { description: Validación }
+        "429": { description: Demasiadas peticiones }
+
+  /api/chatbot/chat:
+    post:
+      tags: [Contact & Chatbot]
+      summary: Asistente (FAQ, opcional webhook n8n si N8N_CHATBOT_WEBHOOK está definido)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChatbotMessage" }
+      responses:
+        "200":
+          description: "{ reply: string }"
+        "429": { description: Rate limit }
+
+  /api/live-art-bookings:
+    post:
+      tags: [Live art]
+      summary: Solicitud de reserva (público; JWT opcional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LiveArtBookingCreate" }
+      responses:
+        "201": { description: Reserva creada con presupuesto estimado }
+        "422": { description: Validación }
+
+  /api/webhooks/loyalty-clients:
+    get:
+      tags: [Webhooks & cron]
+      summary: Clientes inactivos (>3 meses) para campaña fidelización
+      description: |
+        Si `CRON_API_KEY` está definido en `.env`, enviar cabecera `X-Cron-Key` con el mismo valor.
+      parameters:
+        - name: X-Cron-Key
+          in: header
+          required: false
+          schema: { type: string }
+      responses:
+        "200": { description: JSON lista clientes }
+        "401": { description: Clave cron incorrecta }
+
+  /api/settings/{segment}:
+    get:
+      tags: [Settings]
+      summary: Ajuste público por clave (solo claves permitidas por el controlador)
+      parameters:
+        - name: segment
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Valor }
+        "404": { description: No encontrado }
+
+  /api/portrait-orders:
+    post:
+      tags: [Portrait orders]
+      security: [{ bearerAuth: [] }]
+      summary: Crear encargo (estado inicial quote)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PortraitOrderCreate" }
+      responses:
+        "201": { description: Pedido creado }
+    get:
+      tags: [Portrait orders]
+      security: [{ bearerAuth: [] }]
+      summary: Mis encargos
+      responses:
+        "200": { description: Lista }
+
+  /api/portrait-orders/{id}:
+    get:
+      tags: [Portrait orders]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Detalle }
+
+  /api/portrait-orders/{id}/reference-photo:
+    post:
+      tags: [Portrait orders]
+      security: [{ bearerAuth: [] }]
+      summary: Subir foto de referencia (multipart)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/portrait-orders/{id}/history:
+    get:
+      tags: [Portrait orders]
+      security: [{ bearerAuth: [] }]
+      summary: Historial de estados
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Lista eventos }
+
+  /api/admin/portrait-orders/{id}/status:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Cambiar estado del encargo (solo admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { $ref: "#/components/schemas/PortraitStatus" }
+      responses:
+        "200": { description: OK }
+        "403": { description: No admin }
+
+  /api/admin/portrait-orders/{id}/sketch:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Subir boceto (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/portrait-orders/{id}/final:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Subir obra final (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/live-art-bookings/{id}/status:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/live-art-bookings/calendar:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Eventos para calendario
+      responses:
+        "200": { description: JSON eventos }
+
+  /api/admin/live-art-bookings/{id}/quote:
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Generar presupuesto PDF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: PDF o URL según implementación }
+
+  /api/admin/dashboard/stats:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Estadísticas agregadas }
+
+  /api/admin/dashboard/revenue:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Serie ingresos }
+
+  /api/admin/dashboard/orders-by-style:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Agregado por estilo }
+
+  /api/admin/dashboard/top-products:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Productos top }
+
+  /api/orders:
+    post:
+      tags: [Shop orders]
+      security: [{ bearerAuth: [] }]
+      summary: Crear pedido tienda
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ShopOrderCreate" }
+      responses:
+        "201": { description: Pedido creado }
+    get:
+      tags: [Shop orders]
+      security: [{ bearerAuth: [] }]
+      summary: Mis pedidos
+      responses:
+        "200": { description: Lista }
+
+  /api/orders/{id}:
+    get:
+      tags: [Shop orders]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Detalle }
+
+  /api/orders/{id}/invoice:
+    get:
+      tags: [Shop orders]
+      security: [{ bearerAuth: [] }]
+      summary: Descargar factura PDF
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: PDF
+          content:
+            application/pdf: {}
+
+  /api/coupons/validate:
+    post:
+      tags: [Coupons]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CouponValidate" }
+      responses:
+        "200": { description: Cupón válido o error en data }
+
+  /api/admin/settings:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Lista ajustes }
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: OK }
+
+  /api/admin/contact:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Listar mensajes contacto
+      responses:
+        "200": { description: Lista }
+
+  /api/admin/contact/{id}/read:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/contact/{id}:
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/coupons:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Lista }
+    post:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: OK }
+
+  /api/admin/coupons/{id}:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }
+
+  /api/admin/testimonials:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Lista incl. inactivos }
+
+  /api/admin/orders:
+    get:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      summary: Todos los pedidos tienda
+      responses:
+        "200": { description: Lista }
+
+  /api/admin/orders/{id}/status:
+    put:
+      tags: [Admin]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: OK }

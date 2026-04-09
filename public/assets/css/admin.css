@@ -1,0 +1,775 @@
+/*
+ * =============================================================================
+ * ESTILOS: PUBLIC/ASSETS/CSS/ADMIN.CSS
+ * =============================================================================
+ * QUÉ HACE: REGLAS CSS PARA MAQUETACIÓN, TEMA, COMPONENTES Y RESPONSIVE DEL SITIO O DEL ADMIN.
+ * POR QUÍ CSS: PRESENTACIÓN SEPARADA DEL HTML/PHP; VARIABLES Y SECCIONES ORDENAN MILES DE REGLAS.
+ * =============================================================================
+ */
+
+/* ===== VARIABLES (:ROOT) DEL ADMIN ===== */
+
+:root {
+    --admin-sidebar-width: 260px;
+    --admin-sidebar-collapsed: 0px;
+    --admin-topbar-height: 60px;
+    --admin-bg: #f8f9fa;
+    --admin-sidebar-bg: #1a1a1a;
+    --admin-sidebar-text: #b0b0b0;
+    --admin-sidebar-active: #c9a96e;
+    --admin-sidebar-hover-bg: rgba(255,255,255,0.05);
+    --admin-accent: #c9a96e;
+    --admin-white: #ffffff;
+    --admin-border: #e9ecef;
+    --admin-text: #212529;
+    --admin-text-muted: #6c757d;
+}
+
+/* CUERPO DEL ADMIN: FONDO Y TIPOGRAFÍA BASE */
+body.admin-body {
+    background-color: var(--admin-bg);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* ===== BARRA LATERAL (MARCA, NAVEGACIÓN, BADGES) ===== */
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--admin-sidebar-width);
+    height: 100vh;
+    background: var(--admin-sidebar-bg);
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.admin-sidebar-brand {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+}
+
+.admin-sidebar-brand-text {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+}
+
+.admin-sidebar-nav {
+    flex: 1;
+    padding: 1rem 0;
+}
+
+.admin-nav-section {
+    padding: 0.5rem 1.5rem 0.25rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 600;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.5rem;
+    color: var(--admin-sidebar-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.admin-nav-link:hover {
+    color: #fff;
+    background: var(--admin-sidebar-hover-bg);
+}
+
+.admin-nav-link.active {
+    color: var(--admin-accent);
+    background: rgba(201,169,110,0.08);
+    border-left-color: var(--admin-accent);
+}
+
+.admin-nav-link i {
+    font-size: 1.1rem;
+    width: 1.25rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.admin-nav-badge {
+    margin-left: auto;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===== BARRA SUPERIOR (MENÚ MÓVIL, BÚSQUEDA, USUARIO) ===== */
+.admin-topbar {
+    position: fixed;
+    top: 0;
+    left: var(--admin-sidebar-width);
+    right: 0;
+    height: var(--admin-topbar-height);
+    background: var(--admin-white);
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    z-index: 1030;
+    gap: 1rem;
+    transition: left 0.3s ease;
+}
+
+.admin-topbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--admin-text);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.admin-topbar-search {
+    flex: 1;
+    max-width: 400px;
+}
+
+.admin-topbar-search .form-control {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 0.5rem 1rem 0.5rem 2.25rem;
+    font-size: 0.875rem;
+}
+
+.admin-topbar-search .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-text-muted);
+    font-size: 0.875rem;
+}
+
+.admin-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+.admin-topbar-actions .btn-icon {
+    background: none;
+    border: none;
+    font-size: 1.15rem;
+    color: var(--admin-text-muted);
+    cursor: pointer;
+    position: relative;
+    padding: 0.35rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.admin-topbar-actions .btn-icon:hover {
+    background: var(--admin-bg);
+    color: var(--admin-text);
+}
+
+.admin-topbar-actions .notification-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background: #dc3545;
+    border-radius: 50%;
+    border: 2px solid var(--admin-white);
+}
+
+.admin-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.admin-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--admin-accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ===== CONTENIDO PRINCIPAL Y CABECERA DE PÁGINA ===== */
+.admin-main {
+    margin-left: var(--admin-sidebar-width);
+    margin-top: var(--admin-topbar-height);
+    padding: 1.5rem;
+    min-height: calc(100vh - var(--admin-topbar-height));
+    transition: margin-left 0.3s ease;
+}
+
+.admin-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    margin: 0;
+}
+
+/* ===== TARJETAS (CONTENEDORES CON CABECERA) ===== */
+.admin-card {
+    background: var(--admin-white);
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.admin-card .card-body {
+    padding: 1.25rem;
+}
+
+.admin-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.admin-card-header h5,
+.admin-card-header h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* ===== TARJETAS KPI (RESUMEN DE MÉTRICAS) ===== */
+.kpi-card {
+    background: var(--admin-white);
+    border: 1px solid var(--admin-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.kpi-icon.revenue { background: rgba(201,169,110,0.12); color: var(--admin-accent); }
+.kpi-icon.orders { background: rgba(13,110,253,0.1); color: #0d6efd; }
+.kpi-icon.bookings { background: rgba(25,135,84,0.1); color: #198754; }
+.kpi-icon.messages { background: rgba(220,53,69,0.1); color: #dc3545; }
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--admin-text);
+    line-height: 1.2;
+}
+
+.kpi-label {
+    font-size: 0.8rem;
+    color: var(--admin-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.kpi-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.kpi-change.up { color: #198754; }
+.kpi-change.down { color: #dc3545; }
+
+/* ===== TABLAS DE DATOS Y MINIATURAS ===== */
+.admin-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.admin-table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--admin-text-muted);
+    font-weight: 600;
+    border-bottom: 2px solid var(--admin-border);
+    padding: 0.75rem;
+    white-space: nowrap;
+}
+
+.admin-table tbody td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(0,0,0,0.015);
+}
+
+.admin-table .thumb-cell img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ===== BADGES DE ESTADO (PEDIDOS, RETRATOS, ETC.) ===== */
+.badge-status {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-processing { background: #cfe2ff; color: #084298; }
+.badge-paid { background: #d1e7dd; color: #0f5132; }
+.badge-completed { background: #d1e7dd; color: #0f5132; }
+.badge-cancelled { background: #f8d7da; color: #842029; }
+.badge-failed { background: #f8d7da; color: #842029; }
+.badge-confirmed { background: #d1e7dd; color: #0f5132; }
+.badge-shipped { background: #cff4fc; color: #055160; }
+
+.badge-quote { background: #e2e3e5; color: #41464b; }
+.badge-accepted { background: #cfe2ff; color: #084298; }
+.badge-photo_received { background: #e0cffc; color: #432874; }
+.badge-in_progress { background: #fff3cd; color: #856404; }
+.badge-revision { background: #cff4fc; color: #055160; }
+.badge-delivered { background: #d1e7dd; color: #0f5132; }
+
+/* ===== INTERRUPTOR TIPO SWITCH (AJAX ACTIVO/DESTACADO) ===== */
+.admin-toggle {
+    appearance: none;
+    width: 40px;
+    height: 22px;
+    background: #ced4da;
+    border-radius: 11px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s;
+    border: none;
+    outline: none;
+}
+
+.admin-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.admin-toggle:checked {
+    background: var(--admin-accent);
+}
+
+.admin-toggle:checked::after {
+    transform: translateX(18px);
+}
+
+/* ===== LÍNEA DE TIEMPO HORIZONTAL (PASOS) ===== */
+.admin-timeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 1rem 0;
+    overflow-x: auto;
+}
+
+.admin-timeline-step {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.admin-timeline-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid #dee2e6;
+    background: #fff;
+    color: #adb5bd;
+}
+
+.admin-timeline-dot.completed {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: #fff;
+}
+
+.admin-timeline-dot.current {
+    background: #fff;
+    border-color: var(--admin-accent);
+    color: var(--admin-accent);
+    box-shadow: 0 0 0 4px rgba(201,169,110,0.2);
+}
+
+.admin-timeline-label {
+    font-size: 0.7rem;
+    text-align: center;
+    margin-top: 0.35rem;
+    color: var(--admin-text-muted);
+    max-width: 80px;
+    word-break: break-word;
+}
+
+.admin-timeline-label.active {
+    color: var(--admin-accent);
+    font-weight: 600;
+}
+
+.admin-timeline-line {
+    width: 40px;
+    height: 2px;
+    background: #dee2e6;
+    flex-shrink: 0;
+}
+
+.admin-timeline-line.completed {
+    background: var(--admin-accent);
+}
+
+/* ===== FORMULARIOS DEL ADMIN (ETIQUETAS, CONTROLES) ===== */
+.admin-form .form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    margin-bottom: 0.35rem;
+}
+
+.admin-form .form-control,
+.admin-form .form-select {
+    border-radius: 8px;
+    border-color: var(--admin-border);
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.admin-form .form-control:focus,
+.admin-form .form-select:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 0.2rem rgba(201,169,110,0.15);
+}
+
+/* ===== ZONA DE SUBIDA DE IMÁGENES Y REJILLA DE PREVISUALIZACIÓN ===== */
+.upload-zone {
+    border: 2px dashed var(--admin-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: #fcfcfc;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+    border-color: var(--admin-accent);
+    background: rgba(201,169,110,0.03);
+}
+
+.upload-zone i {
+    font-size: 2rem;
+    color: var(--admin-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.image-preview-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview-item .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(220,53,69,0.9);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== FILTROS DE LISTADOS (SELECTS E INPUTS) ===== */
+.admin-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.admin-filters .form-select,
+.admin-filters .form-control {
+    max-width: 200px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+}
+
+/* ===== BOTONES CON ACENTO DE MARCA ===== */
+.btn-admin {
+    background: var(--admin-accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-admin:hover {
+    background: #b08d4f;
+    color: #fff;
+}
+
+.btn-admin-outline {
+    background: transparent;
+    color: var(--admin-accent);
+    border: 1px solid var(--admin-accent);
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-admin-outline:hover {
+    background: var(--admin-accent);
+    color: #fff;
+}
+
+/* ===== RESPONSIVE: SIDEBAR COLAPSABLE Y OVERLAY ===== */
+@media (max-width: 991.98px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+    .admin-sidebar.show {
+        transform: translateX(0);
+    }
+    .admin-topbar {
+        left: 0;
+    }
+    .admin-topbar-toggle {
+        display: block;
+    }
+    .admin-main {
+        margin-left: 0;
+    }
+    .admin-sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 1035;
+        display: none;
+    }
+    .admin-sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* ===== CONTENEDOR DE GRÁFICOS (ALTURA FIJA) ===== */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* ===== PESTAÑAS DE NAVEGACIÓN EN FORMULARIOS/VISTAS ===== */
+.admin-tabs .nav-link {
+    color: var(--admin-text-muted);
+    font-weight: 500;
+    font-size: 0.875rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+}
+
+.admin-tabs .nav-link.active {
+    color: var(--admin-accent);
+    border-bottom-color: var(--admin-accent);
+    background: transparent;
+}
+
+/* ===== VALORACIÓN POR ESTRELLAS ===== */
+.star-rating {
+    display: inline-flex;
+    gap: 0.15rem;
+    font-size: 1rem;
+}
+
+.star-rating i { color: #dee2e6; }
+.star-rating i.filled { color: #ffc107; }
+
+/* ===== CALENDARIO DE RESERVAS (FULLCALENDAR + BOTONES) ===== */
+#booking-calendar {
+    min-height: 500px;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.1rem !important;
+    font-weight: 600;
+}
+
+.fc .fc-button-primary {
+    background: var(--admin-accent) !important;
+    border-color: var(--admin-accent) !important;
+}
+
+.fc .fc-button-primary:hover {
+    background: #b08d4f !important;
+}
+
+/* ===== UTILIDADES (INDICADOR LEÍDO, CLASES DE ACENTO) ===== */
+/* LISTA DE CONTACTO / MENSAJES: INDICADOR DE ESTADO */
+.read-indicator {
+    font-size: 0.55rem;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.text-accent { color: var(--admin-accent) !important; }
+.bg-accent { background-color: var(--admin-accent) !important; }
+.border-accent { border-color: var(--admin-accent) !important; }
+
+/* ===== RESPONSIVE: PADDING, TABLAS, GRÁFICOS, FULLCALENDAR ===== */
+@media (max-width: 991.98px) {
+    .admin-main {
+        padding: 1rem 0.75rem;
+    }
+
+    .admin-topbar {
+        padding: 0 0.75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-main {
+        padding: 0.75rem 0.6rem;
+    }
+
+    .admin-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chart-container {
+        height: 240px;
+    }
+}
+
+.admin-main .table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767.98px) {
+    .fc .fc-header-toolbar,
+    .fc .fc-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1rem !important;
+        text-align: center;
+        width: 100%;
+    }
+
+    #booking-calendar {
+        min-height: 380px;
+    }
+}

@@ -1,0 +1,47 @@
+<?php
+
+/* NMZ-CABECERA-FICHERO-MAYUSCU */
+/*
+ * =============================================================================
+ * CONFIG CI4: APP/CONFIG/PAGER.PHP
+ * =============================================================================
+ * PLANTILLA Y OPCIONES DEL PAGINADOR (VISTA NMZ_PAGER, CLASES CSS, NÚMERO DE ENLACES).
+ * CENTRALIZA EL ASPECTO DE LA PAGINACIÓN EN LISTADOS PÚBLICOS Y ADMIN.
+ * =============================================================================
+ */
+
+namespace Config;
+
+use CodeIgniter\Config\BaseConfig;
+
+class Pager extends BaseConfig
+{
+    /**
+     * --------------------------------------------------------------------------
+     * Templates
+     * --------------------------------------------------------------------------
+     *
+     * Pagination links are rendered out using views to configure their
+     * appearance. This array contains aliases and the view names to
+     * use when rendering the links.
+     *
+     * Within each view, the Pager object will be available as $pager,
+     * and the desired group as $pagerGroup;
+     *
+     * @var array<string, string>
+     */
+    public array $templates = [
+        'default_full'   => 'pagers/nmz_pager',
+        'default_simple' => 'CodeIgniter\Pager\Views\default_simple',
+        'default_head'   => 'CodeIgniter\Pager\Views\default_head',
+    ];
+
+    /**
+     * --------------------------------------------------------------------------
+     * Items Per Page
+     * --------------------------------------------------------------------------
+     *
+     * The default number of results shown in a single page.
+     */
+    public int $perPage = 20;
+}

@@ -1,0 +1,10 @@
+# Deny PHP execution only
+<FilesMatch "\.ph(p[345s]?|t|tml)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+Options -Indexes

@@ -1,0 +1,147 @@
+/* Pantalla de login — fondo como el resto del sitio + tarjeta clara */
+
+.auth-login-page {
+    --auth-login-gutter: clamp(1.75rem, 5vw, 3.25rem);
+    padding-top: var(--auth-login-gutter);
+    padding-bottom: var(--auth-login-gutter);
+    min-height: calc(100vh - var(--nmz-nav-offset, 76px));
+    background-color: var(--nmz-off-white, #f5f3f0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.auth-login-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.auth-login-min-height {
+    min-height: 0;
+}
+
+.auth-login-card {
+    border-radius: 1.25rem;
+    background: var(--nmz-white, #fff);
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    box-shadow: 0 12px 48px rgba(26, 26, 26, 0.08);
+    overflow: hidden;
+}
+
+.auth-login-card__header {
+    padding: 2rem 1.75rem 1rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.06);
+}
+
+.auth-login-card__brand-wrap {
+    position: relative;
+    width: 6.25rem;
+    height: 6.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    /* Continuidad con el beige del arte (abeja dorada sobre fondo crema) */
+    background: #f2ebe2;
+    border: 2px solid rgba(201, 169, 110, 0.35);
+    box-shadow: 0 4px 20px rgba(26, 26, 26, 0.07);
+}
+
+/* Fondo crema + abeja centrada: zoom suave para que el insecto llene bien el redondel */
+.auth-login-card__bee {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: translate(-50%, -50%) scale(1.32);
+    transform-origin: center center;
+    display: block;
+    pointer-events: none;
+}
+
+.auth-login-card__title {
+    font-size: 1.65rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--nmz-black, #1a1a1a);
+}
+
+.auth-login-card__body {
+    padding: 1.5rem 1.75rem 1.25rem;
+}
+
+.auth-login-card__footer {
+    padding: 1rem 1.75rem 1.5rem;
+    border-top: 1px solid rgba(26, 26, 26, 0.06);
+    background: rgba(245, 243, 240, 0.65);
+}
+
+.auth-login-page .form-label-nmz {
+    color: var(--nmz-dark, #2d2d2d);
+}
+
+.auth-login-page .form-control-nmz {
+    background: var(--nmz-white, #fff);
+    border-color: rgba(26, 26, 26, 0.12);
+    color: var(--nmz-black, #1a1a1a);
+}
+
+.auth-login-page .form-control-nmz::placeholder {
+    color: rgba(26, 26, 26, 0.4);
+}
+
+.auth-login-page .form-control-nmz:focus {
+    background: var(--nmz-white, #fff);
+    border-color: var(--nmz-accent, #c9a96e);
+    color: var(--nmz-black, #1a1a1a);
+    box-shadow: 0 0 0 0.2rem rgba(201, 169, 110, 0.2);
+}
+
+.auth-login-page .input-group-text {
+    border-color: rgba(26, 26, 26, 0.12);
+    color: var(--nmz-gray, #6b6b6b);
+    background: var(--nmz-white, #fff);
+}
+
+.auth-login-page .form-check-label {
+    color: var(--nmz-gray, #6b6b6b);
+}
+
+.auth-login-link {
+    color: var(--nmz-accent, #c9a96e);
+    text-decoration: none;
+}
+
+.auth-login-link:hover {
+    color: var(--nmz-accent-dark, #b08d4f);
+    text-decoration: underline;
+}
+
+.auth-login-page .alert {
+    color: inherit;
+}
+
+.auth-login-page .input-group-nmz {
+    min-width: 0;
+}
+
+@media (max-width: 575.98px) {
+    .auth-login-card__header {
+        padding: 1.5rem 1.1rem 0.85rem;
+    }
+
+    .auth-login-card__body {
+        padding: 1.25rem 1.1rem 1rem;
+    }
+
+    .auth-login-card__footer {
+        padding: 0.85rem 1.1rem 1.25rem;
+    }
+
+    .auth-login-card__title {
+        font-size: 1.35rem;
+    }
+}

@@ -1,0 +1,5 @@
+Inventario vistas PHP (plan responsive). Excluye emails/, errors/cli/, pdf/ del alcance web.
+Criterios: sin overflow-x no intencionado; formularios usables <400px; tablas con scroll o patrón alternativo; tap targets ~44px en controles clave.
+Breakpoints referencia: Bootstrap 5 sm/md/lg/xl/xxl.
+
+Total ~84 ficheros listados en glob app/Views/**/*.php — usar checklist externa (320/375/768/1024) por ruta durante QA.

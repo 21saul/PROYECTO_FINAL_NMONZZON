@@ -1,0 +1,30 @@
+# SERVICIO ADICIONAL DDEV: CONTENEDOR N8N PARA AUTOMATIZACIÓN Y WEBHOOKS
+services:
+  n8n:
+    # NOMBRE DEL CONTENEDOR DERIVADO DEL PROYECTO DDEV
+    container_name: ddev-${DDEV_SITENAME}-n8n
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    # EXPOSICIÓN DEL PUERTO DE LA INTERFAZ WEB DE N8N
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=NmzN8n2026!
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_ENCRYPTION_KEY=nmz-n8n-secret-key-change-this
+      - DB_TYPE=sqlite
+    # PERSISTENCIA DE DATOS Y FLUJOS DE N8N
+    volumes:
+      - n8n_data:/home/node/.n8n
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+
+# VOLUMEN NOMBRADO PARA NO PERDER LA CONFIGURACIÓN AL RECREAR EL CONTENEDOR
+volumes:
+  n8n_data:

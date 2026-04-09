@@ -1,0 +1,2 @@
+OK PARCIAL: BaseController.php, Home.php, PortraitSizeModel.php, AnnotateCaps.php anotados a mano desde Cursor.
+PARA EL RESTO: ejecutar tools\EJECUTAR_ANOTACION.bat o: wsl -d DDEV python3 tools/apply_annotation.py /home/ddev/www/nmzonzzonstudio

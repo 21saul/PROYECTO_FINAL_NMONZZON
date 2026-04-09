@@ -1,0 +1,111 @@
+<!-- PÁGINA MOSTRADA CUANDO LA PWA NO TIENE RED: AVISO SIN CONEXIÓN Y BOTÓN PARA REINTENTAR -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
+    <title>Sin conexión — nmonzzon Studio</title>
+    <!-- FUENTES PARA COHERENCIA VISUAL CON EL SITIO PRINCIPAL -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <!-- ESTILOS INCORPORADOS DE LA PANTALLA OFFLINE -->
+    <style>
+        :root {
+            --nmz-black: #1a1a1a;
+            --nmz-accent: #c9a96e;
+            --nmz-off-white: #f5f3f0;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--nmz-off-white);
+            color: var(--nmz-black);
+            -webkit-font-smoothing: antialiased;
+        }
+        .wrap {
+            text-align: center;
+            max-width: 22rem;
+        }
+        .mark {
+            width: 5.5rem;
+            height: 5.5rem;
+            margin: 0 auto 1.75rem;
+            border-radius: 50%;
+            background: var(--nmz-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 40px rgba(26, 26, 26, 0.12);
+        }
+        .mark span {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.75rem;
+            font-weight: 600;
+            color: var(--nmz-accent);
+            line-height: 1;
+        }
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.625rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            color: var(--nmz-black);
+        }
+        p {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: rgba(26, 26, 26, 0.72);
+            margin-bottom: 2rem;
+        }
+        button {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 2px;
+            background: var(--nmz-black);
+            color: var(--nmz-off-white);
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+        button:hover {
+            background: #2a2a2a;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .sub {
+            margin-top: 2.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--nmz-accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- CONTENIDO CENTRADO: MARCA, MENSAJE Y ACCIÓN DE RECARGA -->
+    <div class="wrap">
+        <div class="mark" aria-hidden="true"><span>N</span></div>
+        <h1>Sin conexión</h1>
+        <p>No pudimos alcanzar nmonzzon Studio. Comprueba tu conexión e inténtalo de nuevo.</p>
+        <button type="button" onclick="window.location.reload()">Reintentar</button>
+        <p class="sub">nmonzzon Studio</p>
+    </div>
+</body>
+</html>

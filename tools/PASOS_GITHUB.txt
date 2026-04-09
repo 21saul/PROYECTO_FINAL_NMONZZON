@@ -1,0 +1,30 @@
+PASOS PARA ANOTAR TODO EL PHP Y SUBIR A GITHUB
+================================================
+
+1) Abrir terminal en Windows (PowerShell) o WSL.
+
+2) Ir al proyecto:
+   cd /home/ddev/www/nmzonzzonstudio
+   (o la ruta UNC equivalente en Windows)
+
+3) Anotar todos los .php (excepto app/Views, vendor, tools, etc.):
+   ddev exec php spark annotate:caps
+   O bien:
+   ddev exec php tools/annotate_caps.php
+   O con Composer en el host:
+   composer annotate-caps
+
+4) Inicializar Git (solo la primera vez) y subir:
+   git init
+   git config user.email "tu@correo"
+   git config user.name "Tu nombre"
+   git add -A
+   git commit -m "Proyecto final nmonzzon Studio"
+   git branch -M main
+   git remote add origin https://github.com/21saul/PROYECTO_FINAL_NMONZZON.git
+   git push -u origin main
+
+   Si el remoto ya existe y pide credenciales, usa un Personal Access Token de GitHub
+   como contraseña (HTTPS) o configura SSH.
+
+5) README.md está en .gitignore (/README.md) para no subirlo al remoto.

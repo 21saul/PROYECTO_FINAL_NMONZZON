@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /mi-cuenta/
+Disallow: /checkout/
+Disallow: /carrito/
+Disallow: /login
+Disallow: /register
+Disallow: /writable/
+
+Sitemap: https://nmzonzzonstudio.ddev.site/sitemap.xml
