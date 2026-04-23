@@ -115,6 +115,9 @@
                         <label for="special_requirements" class="form-label">Requisitos o notas</label>
                         <textarea class="form-control" id="special_requirements" name="special_requirements" rows="4"><?= esc(old('special_requirements') ?? '') ?></textarea>
                     </div>
+                    <div class="col-12">
+                        <?= view('partials/captcha') ?>
+                    </div>
                     <div class="col-12 text-center pt-2">
                         <button type="submit" class="btn btn-nmz btn-lg">Enviar solicitud</button>
                     </div>

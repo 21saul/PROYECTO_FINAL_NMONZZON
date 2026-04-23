@@ -68,25 +68,18 @@ $fmtDate = static function ($dt): string {
 
 <?= $this->section('content') ?>
 
-<section
-    class="page-hero"
-    style="background-image: url('<?= esc(nmz_mi_cuenta_hero_bg_url(), 'attr') ?>');"
->
-    <div class="page-hero-overlay"></div>
-    <div class="container page-hero-content py-4 text-center">
-        <?= view('partials/nmz-hero-heading', [
-            'nmzHeroCrumbs' => [
-                ['label' => 'Inicio', 'url' => base_url('/')],
-                ['label' => 'Mi cuenta', 'url' => null],
-            ],
-            'nmzHeroTitle' => 'Mi cuenta',
-        ]) ?>
-    </div>
-</section>
-
-<section class="section-padding bg-white border-bottom">
+<section class="nmz-page-header py-4 border-bottom bg-white">
     <div class="container">
-        <p class="lead mb-0">Bienvenida, <?= $welcomeName ?></p>
+        <nav class="nmz-hero-crumbs nmz-hero-crumbs--on-light nmz-hero-crumbs--align-start" aria-label="Migas de pan">
+            <ol class="nmz-hero-crumbs__list">
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('/'), 'attr') ?>">Inicio</a></li>
+                <li class="nmz-hero-crumbs__item"><span aria-current="page">Mi cuenta</span></li>
+            </ol>
+        </nav>
+        <h1 class="nmz-page-hero__title nmz-page-hero__title--on-light mt-2">Mi cuenta</h1>
+        <?php if ($welcomeName !== '') : ?>
+        <p class="lead mb-0 mt-2">Bienvenida, <?= $welcomeName ?></p>
+        <?php endif; ?>
     </div>
 </section>
 

@@ -1,0 +1,12 @@
+# Instala el demonio cron en el contenedor web para ejecutar los comandos Spark de automatización.
+# Se fusiona con la imagen DDEV al hacer ddev restart (junto con otros Dockerfile* de web-build).
+RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests cron
+
+# Registra cron como proceso bajo supervisord (igual que el addon ddev/ddev-cron).
+COPY nmzonzzonstudio-supervisor-cron.conf /etc/supervisor/conf.d/nmzonzzonstudio-cron.conf
+
+# Tareas: usuario "ddev" es el usuario por defecto del contenedor web en DDEV.
+COPY nmzonzzonstudio-cron-d /etc/cron.d/nmzonzzonstudio
+
+# Los ficheros en /etc/cron.d deben ser propiedad de root y no ejecutables (formato debian).
+RUN chmod 0644 /etc/cron.d/nmzonzzonstudio

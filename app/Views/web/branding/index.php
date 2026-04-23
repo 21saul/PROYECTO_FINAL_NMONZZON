@@ -130,7 +130,8 @@ $brandPillars = [
                 ['label' => 'Inicio', 'url' => base_url('/')],
                 ['label' => 'Branding', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Branding',
+            'nmzHeroTitle'    => 'Branding',
+            'nmzHeroSubtitle' => 'Identidad · Logotipos · Manuales',
         ]) ?>
         <div class="brand-hero__cta">
             <a href="#casos" class="btn btn-nmz">Ver casos</a>

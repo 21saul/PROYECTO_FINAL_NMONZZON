@@ -165,6 +165,10 @@ if (is_file($contactHeroPath)) {
                             ><?= esc(old('message') ?? '') ?></textarea>
                         </div>
 
+                        <div class="mt-3">
+                            <?= view('partials/captcha') ?>
+                        </div>
+
                         <div class="text-center pt-3 mt-auto">
                             <button type="submit" class="btn btn-nmz px-4">
                                 <i class="bi bi-send me-2" aria-hidden="true"></i><?= esc('Enviar mensaje') ?>

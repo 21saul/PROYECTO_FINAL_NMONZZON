@@ -130,6 +130,15 @@ class ArteEnVivoController extends BaseController
             return redirect()->back();
         }
 
+        // CAPTCHA DE PUZZLE: VALIDAR ANTES DE LAS REGLAS DE NEGOCIO PARA RECHAZAR BOTS RÁPIDO
+        helper('captcha');
+        if (! nmz_captcha_verify(
+            (string) $this->request->getPost('captcha_token'),
+            (string) $this->request->getPost('captcha_answer')
+        )) {
+            return redirect()->back()->withInput()->with('error', 'La verificación anti-spam no es correcta. Inténtalo de nuevo.');
+        }
+
         $rules = [
             'contact_name'         => 'required|max_length[100]',
             'contact_email'        => 'required|valid_email',

@@ -248,3 +248,50 @@
     border-radius: 0.25rem;
     color: #842029;
 }
+
+/* Variante plana: tarjeta en una cabecera ligera, sin fondo ni overlap con el contenido */
+.profile-identity-card--flat {
+    --profile-card-side: auto;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    gap: 1rem;
+    overflow: visible;
+}
+
+@media (min-width: 768px) {
+    .profile-identity-card--flat {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .profile-identity-card--flat .profile-identity-card__main {
+        flex: 1 1 auto;
+    }
+
+    .profile-identity-card--flat .profile-identity-card__actions {
+        width: auto;
+        margin-top: 0;
+        margin-left: auto;
+    }
+}
+
+.profile-identity-card--flat .profile-identity-card__email,
+.profile-identity-card--flat .profile-identity-card__greeting {
+    text-align: inherit;
+    justify-content: flex-start;
+}
+
+/* Sin hero por encima: elimina el “pull up” que solapaba con la cabecera anterior */
+.nmz-page-header + .profile-section-nmz,
+.profile-section-nmz:first-of-type {
+    margin-top: 0;
+}

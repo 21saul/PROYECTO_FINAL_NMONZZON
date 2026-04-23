@@ -125,5 +125,7 @@ _modules/*
 /results/
 /phpunit*.xml
 
-# No incluir README en el remoto (entrega sin README)
-/README.md
+# Zone.Identifier (Windows Alternate Data Streams generados al descargar ficheros).
+# Windows sustituye el ':' por un carácter PUA (U+E03A) cuando se exponen vía WSL,
+# por lo que ignoramos cualquier fichero cuyo nombre termine en "Zone.Identifier".
+*Zone.Identifier

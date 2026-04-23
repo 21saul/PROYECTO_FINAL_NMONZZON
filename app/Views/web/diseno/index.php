@@ -86,7 +86,8 @@ $disenoScope = [
                 ['label' => 'Inicio', 'url' => base_url('/')],
                 ['label' => 'Diseño', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Diseño',
+            'nmzHeroTitle'    => 'Diseño',
+            'nmzHeroSubtitle' => 'Cartelería · Diseño textil · Cover art',
         ]) ?>
         <?php if ($projectsWithSlug !== []) : ?>
         <a href="#proyectos" class="btn btn-nmz btn-lg ret-hero__cta"><?= esc('Ver proyectos') ?></a>

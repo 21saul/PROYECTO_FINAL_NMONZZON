@@ -110,10 +110,31 @@ class CartController extends BaseController
 
         // RESPUESTA JSON PARA PETICIONES AJAX
         if ($this->request->isAJAX()) {
+            $productPayload = null;
+            try {
+                $productModel = model(\App\Models\ProductModel::class);
+                $productRow   = $productModel->find($productId);
+                if (is_array($productRow)) {
+                    $imgRel = (string) ($productRow['featured_image'] ?? '');
+                    $imgUrl = $imgRel !== ''
+                        ? (preg_match('#^https?://#i', $imgRel) ? $imgRel : base_url(ltrim($imgRel, '/')))
+                        : '';
+                    $productPayload = [
+                        'name'  => (string) ($productRow['name'] ?? ''),
+                        'image' => $imgUrl,
+                        'price' => (float)  ($productRow['price'] ?? 0),
+                    ];
+                }
+            } catch (\Throwable $e) {
+                log_message('warning', 'Cart add product enrich failed: ' . $e->getMessage());
+            }
+
             return $this->response->setJSON([
                 'success'   => true,
                 'message'   => 'Producto añadido al carrito.',
                 'itemCount' => $this->cartService->getItemCount(),
+                'quantity'  => $quantity,
+                'product'   => $productPayload,
             ]);
         }
 

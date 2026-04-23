@@ -21,66 +21,17 @@
 $featuredImages = $featured_live_art_images ?? null;
 
 $liveArtGalleryImages = $liveArtGalleryImages ?? [];
-$galleryTotal         = count($liveArtGalleryImages);
 
 /**
- * Mismo mosaico que Retratos (2×2 simétrico por cada 4 fotos).
+ * Patrón de tamaños para el carrusel masonry horizontal.
+ * Repite la secuencia wide (apaisada) → tall (vertical, 2 filas) → half (cuadrada)
+ * para que el track alterne alturas y produzca el efecto masonry horizontal.
  */
-$liveMosaicCell = static function (int $idx, int $total): array {
-    if ($total < 1) {
-        return ['style' => '', 'mod' => 'ret-mosaic--wide'];
-    }
-    $rem       = $total % 4;
-    $tailStart = $rem === 0 ? $total : ($total - $rem);
+$liveMasonryMod = static function (int $idx): string {
+    $pattern = ['wide', 'tall', 'half', 'wide', 'half', 'tall'];
 
-    if ($idx >= $tailStart && $rem > 0) {
-        $local   = $idx - $tailStart;
-        $rowBase = (int) (floor($tailStart / 4) * 3) + 1;
-
-        if ($rem === 1) {
-            return [
-                'style' => 'grid-column:1 / span 2; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-        if ($rem === 2) {
-            $col = $local === 0 ? 1 : 2;
-
-            return [
-                'style' => 'grid-column:' . $col . '; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-        if ($local === 0) {
-            return [
-                'style' => 'grid-column:1 / span 2; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-
-        return [
-            'style' => 'grid-column:' . ($local === 1 ? 1 : 2) . '; grid-row:' . ($rowBase + 1) . ';',
-            'mod'   => 'ret-mosaic--half',
-        ];
-    }
-
-    $pos  = $idx % 4;
-    $row0 = (int) (floor($idx / 4) * 3) + 1;
-
-    if ($pos === 0) {
-        return ['style' => 'grid-column:1; grid-row:' . $row0 . ';', 'mod' => 'ret-mosaic--wide'];
-    }
-    if ($pos === 1) {
-        return ['style' => 'grid-column:2; grid-row:' . $row0 . ' / span 2;', 'mod' => 'ret-mosaic--tall'];
-    }
-    if ($pos === 2) {
-        return ['style' => 'grid-column:1; grid-row:' . ($row0 + 1) . ' / span 2;', 'mod' => 'ret-mosaic--tall'];
-    }
-
-    return ['style' => 'grid-column:2; grid-row:' . ($row0 + 2) . ';', 'mod' => 'ret-mosaic--wide'];
+    return 'ret-hmasonry__item--' . $pattern[$idx % count($pattern)];
 };
-
-$galleryVisible = 8;
 
 $introImg = 'uploads/live-art/Las_bodas_de_Sabela.png';
 if (! empty($featuredImages) && is_array($featuredImages)) {
@@ -104,12 +55,9 @@ $introImgUrl = base_url($introImg);
                 ['label' => 'Inicio', 'url' => base_url('/')],
                 ['label' => 'Arte en vivo', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Arte en vivo',
+            'nmzHeroTitle'    => 'Arte en vivo',
+            'nmzHeroSubtitle' => 'Bodas · Eventos · Performance',
         ]) ?>
-        <div class="hero-cta">
-            <a href="#reservar" class="btn btn-nmz">Reserva tu evento</a>
-            <a href="#galeria" class="btn btn-nmz-outline" style="color: #fff; border-color: rgba(255,255,255,.6);">Ver galería</a>
-        </div>
     </div>
 </section>
 
@@ -141,9 +89,18 @@ $introImgUrl = base_url($introImg);
                         eventos especiales. Trabajo con materiales adaptados al espacio y al ritmo del evento, cuidando
                         la iluminación y la comodidad de cada persona.
                     </p>
-                    <blockquote class="blockquote-nmz">
+                    <blockquote class="blockquote-nmz mb-0">
                         Una experiencia memorable y piezas únicas que reflejan la energía del día.
                     </blockquote>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10 text-center" data-aos="fade-up">
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#reservar" class="btn btn-nmz btn-lg px-4">Reserva tu evento</a>
+                    <a href="#galeria" class="btn btn-nmz-outline btn-lg px-4">Ver galería</a>
                 </div>
             </div>
         </div>
@@ -175,6 +132,17 @@ $introImgUrl = base_url($introImg);
                 </div>
             </div>
             <?php endforeach; ?>
+        </div>
+        <div class="liveart-process-cta text-center mt-5" data-aos="fade-up">
+            <p class="lead mb-3">¿Listo para convertir tu celebración en una experiencia artística única?</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="#reservar" class="btn btn-nmz btn-lg px-4">
+                    <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Reserva ahora
+                </a>
+                <a href="#galeria" class="btn btn-nmz-outline btn-lg px-4">
+                    <i class="bi bi-images me-2" aria-hidden="true"></i>Ver portafolio
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -212,7 +180,7 @@ $introImgUrl = base_url($introImg);
 <!-- 5. Galería — mismo mosaico que Retratos (carpeta uploads/live-art/fotosartenvivo) -->
 <section class="section-padding ret-section--gallery" id="galeria">
     <div class="container">
-        <h2 class="section-title text-center">Galería</h2>
+        <h2 class="section-title text-center">Portafolio de Arte en Vivo</h2>
 
         <?php if (empty($liveArtGalleryImages)) : ?>
         <p class="text-center text-muted mb-0">
@@ -220,25 +188,30 @@ $introImgUrl = base_url($introImg);
             (copia aquí el contenido de tu carpeta de imágenes).
         </p>
         <?php else : ?>
-        <div class="ret-grid-gallery" id="liveArtGallery">
-            <?php foreach ($liveArtGalleryImages as $idx => $gi) :
-                $src    = base_url('uploads/live-art/fotosartenvivo/' . rawurlencode($gi['file']));
-                $hidden = $idx >= $galleryVisible ? ' ret-grid-gallery__item--hidden' : '';
-                $cell   = $liveMosaicCell($idx, $galleryTotal);
-            ?>
-            <a href="<?= esc($src, 'attr') ?>" class="glightbox ret-grid-gallery__item <?= esc($cell['mod']) ?><?= $hidden ?>" style="<?= esc($cell['style'], 'attr') ?>" data-gallery="arte-en-vivo" data-glightbox="title: <?= esc($gi['label'], 'attr') ?>">
-                <img src="<?= esc($src, 'attr') ?>" alt="<?= esc($gi['label'], 'attr') ?>" loading="lazy" decoding="async">
-            </a>
-            <?php endforeach; ?>
-        </div>
+        <div class="ret-hmasonry" data-hmasonry role="region" aria-label="Galería de Arte en Vivo">
+            <div class="ret-hmasonry__track" id="liveArtGalleryScroller" tabindex="0">
+                <?php foreach ($liveArtGalleryImages as $idx => $gi) :
+                    $src = base_url('uploads/live-art/fotosartenvivo/' . rawurlencode($gi['file']));
+                    $mod = $liveMasonryMod($idx);
+                    ?>
+                <a
+                    href="<?= esc($src, 'attr') ?>"
+                    class="glightbox ret-hmasonry__item <?= esc($mod) ?>"
+                    data-gallery="arte-en-vivo"
+                    data-glightbox="title: <?= esc($gi['label'], 'attr') ?>"
+                >
+                    <img src="<?= esc($src, 'attr') ?>" alt="<?= esc($gi['label'], 'attr') ?>" loading="lazy" decoding="async">
+                </a>
+                <?php endforeach; ?>
+            </div>
 
-        <?php if (count($liveArtGalleryImages) > $galleryVisible) : ?>
-        <div class="text-center mt-4">
-            <button type="button" class="btn btn-outline-nmz" id="liveArtGalleryToggle" data-label-more="Ver todas las fotos" data-label-less="Ver menos">
-                Ver todas las fotos <span class="ret-gallery-count">(<?= count($liveArtGalleryImages) ?>)</span>
-            </button>
+            <div class="ret-hmasonry__more">
+                <button type="button" class="btn btn-nmz-outline" data-hmasonry-more aria-controls="liveArtGalleryScroller">
+                    Ver más <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
-        <?php endif; ?>
+        <p class="text-center mt-3 text-muted">* Ejemplo real de una boda celebrada en Vigo.</p>
         <?php endif; ?>
     </div>
 </section>
@@ -279,7 +252,7 @@ $introImgUrl = base_url($introImg);
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-8">
-                <h2 class="section-title text-center mb-4">Reserva tu evento</h2>
+                <h2 class="section-title text-center mb-4">Reserva el servicio Arte en Vivo para tu evento</h2>
 
                 <div class="liveart-form-features mb-4">
                     <span class="liveart-form-feature"><i class="bi bi-check2-circle" aria-hidden="true"></i> Presupuesto sin compromiso</span>
@@ -341,6 +314,9 @@ $introImgUrl = base_url($introImg);
                             <label for="special_requirements" class="form-label">Requisitos o notas</label>
                             <textarea class="form-control" id="special_requirements" name="special_requirements" rows="3" placeholder="Horarios, estilo deseado…"><?= esc(old('special_requirements') ?? '') ?></textarea>
                         </div>
+                        <div class="col-12">
+                            <?= view('partials/captcha') ?>
+                        </div>
                         <div class="col-12 text-center pt-3">
                             <button type="submit" class="btn btn-nmz btn-lg px-5">
                                 <i class="bi bi-send me-2" aria-hidden="true"></i>Enviar solicitud
@@ -359,6 +335,7 @@ $introImgUrl = base_url($introImg);
 <?= $this->endSection() ?>
 
 <?= $this->section('extra_js') ?>
+<script src="<?= base_url('assets/js/gallery-carousel.js') ?>"></script>
 <script>
 (function () {
     /* Hero GSAP */
@@ -378,29 +355,6 @@ $introImgUrl = base_url($introImg);
         cfg.particles.opacity.value = 0.4;
         cfg.particles.move.speed = 1.8;
         particlesJS('liveart-particles', cfg);
-    }
-
-    /* Galería mosaico — ver más / menos + lightbox */
-    var toggleBtn = document.getElementById('liveArtGalleryToggle');
-    var gallery = document.getElementById('liveArtGallery');
-    if (toggleBtn && gallery) {
-        var expanded = false;
-        var labelMore = toggleBtn.getAttribute('data-label-more') || 'Ver todas las fotos';
-        var labelLess = toggleBtn.getAttribute('data-label-less') || 'Ver menos';
-        var total = gallery.querySelectorAll('.ret-grid-gallery__item').length;
-        toggleBtn.addEventListener('click', function () {
-            expanded = !expanded;
-            gallery.classList.toggle('ret-grid-gallery--expanded', expanded);
-            if (expanded) {
-                toggleBtn.textContent = labelLess;
-            } else {
-                toggleBtn.innerHTML = labelMore + ' <span class="ret-gallery-count">(' + total + ')</span>';
-            }
-        });
-    }
-
-    if (typeof GLightbox !== 'undefined') {
-        GLightbox({ selector: '.glightbox' });
     }
 })();
 </script>

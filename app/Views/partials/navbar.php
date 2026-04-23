@@ -45,10 +45,6 @@
 
                 <ul class="navbar-nav mx-lg-auto gap-lg-4">
                     <li class="nav-item">
-                        <a class="nav-link <?= url_is('productos*') ? 'active' : '' ?>"
-                           href="<?= base_url('productos') ?>">Productos</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link <?= url_is('retratos*') ? 'active' : '' ?>"
                            href="<?= base_url('retratos') ?>">Retratos</a>
                     </li>
@@ -62,11 +58,15 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= url_is('eventos*') ? 'active' : '' ?>"
-                           href="<?= base_url('eventos') ?>">Eventos</a>
+                           href="<?= base_url('eventos') ?>">Papelería</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= url_is('diseno*') ? 'active' : '' ?>"
                            href="<?= base_url('diseno') ?>">Diseño</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= (url_is('tienda*') || url_is('productos*')) ? 'active' : '' ?>"
+                           href="<?= base_url('tienda') ?>">Tienda</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= url_is('contacto*') ? 'active' : '' ?>"

@@ -44,7 +44,6 @@ if ($avatarPath !== '') {
         ? $avatarPath
         : base_url(ltrim($avatarPath, '/'));
 }
-$miCuentaHeroBg = nmz_mi_cuenta_hero_bg_url();
 ?>
 
 <?= $this->section('extra_css') ?>
@@ -53,13 +52,16 @@ $miCuentaHeroBg = nmz_mi_cuenta_hero_bg_url();
 
 <?= $this->section('content') ?>
 
-<section
-    class="profile-hero-nmz profile-hero-nmz--account-bg profile-hero-nmz--light-hero"
-    style="background-image: url('<?= esc($miCuentaHeroBg, 'attr') ?>'); background-size: cover; background-position: center;"
->
-    <div class="container profile-hero-inner">
-        <h1 class="visually-hidden"><?= esc('Mi perfil') ?></h1>
-        <div class="profile-identity-card">
+<section class="nmz-page-header py-4 border-bottom bg-white">
+    <div class="container">
+        <nav class="nmz-hero-crumbs nmz-hero-crumbs--on-light nmz-hero-crumbs--align-start" aria-label="Migas de pan">
+            <ol class="nmz-hero-crumbs__list">
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('/'), 'attr') ?>">Inicio</a></li>
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('mi-cuenta'), 'attr') ?>">Mi cuenta</a></li>
+                <li class="nmz-hero-crumbs__item"><span aria-current="page">Mi perfil</span></li>
+            </ol>
+        </nav>
+        <div class="profile-identity-card profile-identity-card--flat mt-3">
             <div class="profile-identity-card__avatar">
                 <?php if ($avatarPublicUrl !== '') : ?>
                 <div class="profile-avatar profile-avatar--photo profile-avatar--profile-hero" aria-hidden="true">
@@ -70,7 +72,7 @@ $miCuentaHeroBg = nmz_mi_cuenta_hero_bg_url();
                 <?php endif; ?>
             </div>
             <div class="profile-identity-card__main">
-                <h2 class="profile-identity-card__greeting font-heading">Hola, <?= esc($firstName) ?></h2>
+                <h1 class="profile-identity-card__greeting font-heading">Hola, <?= esc($firstName) ?></h1>
                 <p class="profile-identity-card__email">
                     <i class="bi bi-envelope" aria-hidden="true"></i>
                     <span class="text-break"><?= esc($email) ?></span>

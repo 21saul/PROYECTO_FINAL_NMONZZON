@@ -42,6 +42,15 @@ class ContactoController extends BaseController
             return redirect()->back()->with('error', 'No se pudo enviar el mensaje.');
         }
 
+        // CAPTCHA DE PUZZLE: TOKEN + X DE LA PIEZA SE VALIDAN CONTRA SESIÓN (CONSUME EL TOKEN AL VERIFICAR)
+        helper('captcha');
+        if (! nmz_captcha_verify(
+            (string) $request->getPost('captcha_token'),
+            (string) $request->getPost('captcha_answer')
+        )) {
+            return redirect()->back()->withInput()->with('error', 'La verificación anti-spam no es correcta. Inténtalo de nuevo.');
+        }
+
         // RATE LIMIT POR IP: MÁXIMO 3 ENVÍOS EN VENTANA DE UNA HORA (USANDO CACHÉ)
         $ip = (string) $request->getIPAddress();
         $cache = cache();

@@ -67,7 +67,8 @@ $buildQuery = static function (?string $catSlug, string $order, ?int $page = nul
                 ['label' => 'Inicio', 'url' => base_url('/')],
                 ['label' => 'Tienda', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Tienda',
+            'nmzHeroTitle'    => 'Tienda',
+            'nmzHeroSubtitle' => 'Láminas · Originales · Merchandising',
         ]) ?>
     </div>
 </section>

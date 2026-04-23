@@ -5,10 +5,12 @@
  *
  * @var array<int, array{label: string, url?: string|null}> $nmzHeroCrumbs  último ítem sin url = actual
  * @var string                                               $nmzHeroTitle
+ * @var string                                               $nmzHeroSubtitle    descriptor en mayúsculas separado por · (opcional)
  * @var string                                               $nmzHeroCrumbsClass clases extra en <nav>
  */
 $nmzHeroCrumbs      = $nmzHeroCrumbs ?? [];
 $nmzHeroTitle       = (string) ($nmzHeroTitle ?? '');
+$nmzHeroSubtitle    = trim((string) ($nmzHeroSubtitle ?? ''));
 $nmzHeroCrumbsClass = trim((string) ($nmzHeroCrumbsClass ?? ''));
 ?>
 <?php if ($nmzHeroCrumbs !== []) : ?>
@@ -35,4 +37,7 @@ $nmzHeroCrumbsClass = trim((string) ($nmzHeroCrumbsClass ?? ''));
 <?php endif; ?>
 <?php if ($nmzHeroTitle !== '') : ?>
 <h1 class="nmz-page-hero__title"><?= esc($nmzHeroTitle) ?></h1>
+<?php endif; ?>
+<?php if ($nmzHeroSubtitle !== '') : ?>
+<p class="nmz-page-hero__subtitle"><?= esc($nmzHeroSubtitle) ?></p>
 <?php endif; ?>

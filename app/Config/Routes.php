@@ -46,7 +46,9 @@ $routes->get('eventos/(:segment)', 'Web\EventosController::show/$1');
 $routes->get('diseno', 'Web\DisenoController::index');
 $routes->get('diseno/(:segment)', 'Web\DisenoController::show/$1');
 
-// CATÁLOGO DE PRODUCTOS / TIENDA
+// CATÁLOGO PÚBLICO: TIENDA (canónico) + ALIAS LEGACY /productos
+$routes->get('tienda', 'Web\ProductosController::index');
+$routes->get('tienda/(:segment)', 'Web\ProductosController::show/$1');
 $routes->get('productos', 'Web\ProductosController::index');
 $routes->get('productos/(:segment)', 'Web\ProductosController::show/$1');
 
@@ -74,6 +76,11 @@ $routes->post('carrito/remove-coupon', 'Web\CartController::removeCoupon');
 // FORMULARIO DE CONTACTO
 $routes->get('contacto', 'Web\ContactoController::index');
 $routes->post('contacto', 'Web\ContactoController::send');
+
+// CAPTCHA DE PUZZLE (IMÁGENES GD + REFRESH JSON)
+$routes->get('captcha/bg/(:segment)', 'Web\CaptchaController::background/$1');
+$routes->get('captcha/piece/(:segment)', 'Web\CaptchaController::piece/$1');
+$routes->get('captcha/refresh', 'Web\CaptchaController::refresh');
 
 // SITEMAP Y PÁGINAS LEGALES
 $routes->get('sitemap.xml', 'Web\SitemapController::index');

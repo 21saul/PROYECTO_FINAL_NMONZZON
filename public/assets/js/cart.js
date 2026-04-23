@@ -205,13 +205,33 @@
                 const res = wrapped.body;
                 if (res.success) {
                     updateBadge(res.itemCount);
-                    const toast = document.getElementById('cart-toast');
-                    if (toast && typeof bootstrap !== 'undefined') {
-                        const body = toast.querySelector('.toast-body');
-                        if (body) {
-                            body.textContent = res.message || 'Añadido al carrito';
+                    const modalEl = document.getElementById('cart-added-modal');
+                    if (modalEl && typeof bootstrap !== 'undefined') {
+                        const product = res.product || {};
+                        const nameEl  = modalEl.querySelector('#cart-added-name');
+                        const priceEl = modalEl.querySelector('#cart-added-price');
+                        const countEl = modalEl.querySelector('#cart-added-count');
+                        const thumbEl = modalEl.querySelector('#cart-added-thumb');
+                        if (nameEl) nameEl.textContent = product.name || 'Producto añadido';
+                        if (priceEl && typeof product.price === 'number') {
+                            priceEl.textContent = fmt(product.price) + ' €';
+                            priceEl.style.display = '';
+                        } else if (priceEl) {
+                            priceEl.style.display = 'none';
                         }
-                        new bootstrap.Toast(toast).show();
+                        if (countEl) {
+                            const items = res.itemCount || 0;
+                            countEl.textContent = items === 1
+                                ? '1 artículo en tu carrito'
+                                : items + ' artículos en tu carrito';
+                        }
+                        if (thumbEl) {
+                            if (product.image) {
+                                thumbEl.src = product.image;
+                                thumbEl.alt = product.name || '';
+                            }
+                        }
+                        bootstrap.Modal.getOrCreateInstance(modalEl).show();
                     }
                     return;
                 }

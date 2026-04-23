@@ -90,9 +90,10 @@ $eventosServices = [
         <?= view('partials/nmz-hero-heading', [
             'nmzHeroCrumbs' => [
                 ['label' => 'Inicio', 'url' => base_url('/')],
-                ['label' => 'Eventos', 'url' => null],
+                ['label' => 'Papelería', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Eventos',
+            'nmzHeroTitle'    => 'Papelería',
+            'nmzHeroSubtitle' => 'Invitaciones · Menús · Detalles impresos',
         ]) ?>
         <div class="studio-hub__cta">
             <a href="<?= esc(base_url('contacto')) ?>" class="btn btn-nmz"><?= esc('Pedir presupuesto') ?></a>

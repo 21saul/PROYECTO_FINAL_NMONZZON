@@ -96,12 +96,40 @@
     <!-- ENLACE VOLVER ARRIBA -->
     <a href="#" class="back-to-top" id="backToTop"><i class="bi bi-chevron-up"></i></a>
 
-    <!-- Toast al añadir al carrito (cart.js): centrado en móvil, esquina en md+ -->
-    <div class="toast-container position-fixed bottom-0 start-0 end-0 p-2 p-md-3 d-flex justify-content-center justify-content-md-end align-items-end" style="z-index: 1090; pointer-events: none;" aria-live="polite">
-        <div id="cart-toast" class="toast align-items-center text-bg-dark border-0 mw-100" style="max-width: min(100%, 420px); pointer-events: auto;" role="status" data-bs-delay="2800">
-            <div class="d-flex">
-                <div class="toast-body">Producto añadido al carrito</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    <!-- Modal de oferta de bienvenida (auto-open 1ª visita en sesión) -->
+    <?= $this->include('partials/offer-banner') ?>
+
+    <!-- Modal de confirmación al añadir al carrito (lo dispara cart.js) -->
+    <div class="modal fade nmz-cart-added-modal" id="cart-added-modal" tabindex="-1" aria-labelledby="cartAddedTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="cartAddedTitle">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        <span>¡Añadido al carrito!</span>
+                    </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="nmz-cart-added-modal__product">
+                        <div class="nmz-cart-added-modal__thumb">
+                            <img id="cart-added-thumb" src="<?= esc(base_url('uploads/site/carousel-productos.png'), 'attr') ?>" alt="">
+                        </div>
+                        <div class="flex-grow-1 min-w-0">
+                            <p class="nmz-cart-added-modal__name" id="cart-added-name">Producto añadido</p>
+                            <p class="nmz-cart-added-modal__price" id="cart-added-price"></p>
+                            <p class="nmz-cart-added-modal__count" id="cart-added-count"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-nmz-outline" data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Seguir comprando
+                    </button>
+                    <a href="<?= esc(base_url('carrito'), 'attr') ?>" class="btn btn-nmz">
+                        <i class="bi bi-bag-check me-1" aria-hidden="true"></i>Ir al carrito
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -118,6 +146,30 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="<?= base_url('assets/js/app.js') ?>"></script>
     <script src="<?= base_url('assets/js/cart.js') ?>"></script>
+    <script src="<?= base_url('assets/js/captcha-puzzle.js') ?>" defer></script>
+    <script>
+    /* Modal de oferta: auto-open una vez por sesión, respetando reduced-motion. */
+    (function () {
+        var modalEl = document.getElementById('nmzOfferModal');
+        if (!modalEl || typeof bootstrap === 'undefined') {
+            return;
+        }
+        var SESSION_KEY = 'nmzOfferModalShown';
+        try {
+            if (sessionStorage.getItem(SESSION_KEY) === '1') {
+                return;
+            }
+        } catch (e) {
+            /* sessionStorage no disponible (modo privado): seguimos y se mostrará una vez */
+        }
+        var instance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        var delay = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 700;
+        window.setTimeout(function () {
+            instance.show();
+            try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) { /* noop */ }
+        }, delay);
+    })();
+    </script>
 
     <?= $this->renderSection('extra_js') ?>
 </body>

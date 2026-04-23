@@ -40,68 +40,16 @@ foreach ($sizes as $sz) {
 $hasAnySizes = ! empty($sizesByType['print']) || ! empty($sizesByType['frame']);
 
 $galleryImages = $galleryImages ?? [];
-$galleryTotal  = count($galleryImages);
 
 /**
- * Mosaico simétrico 2 columnas × 3 filas por cada 4 fotos (ancha | larga / larga | ancha) sin huecos.
- * Cola 1–3 fotos: también rellena el ancho sin dejar celdas vacías.
+ * Patrón de tamaños para el carrusel masonry horizontal — altura fija por fila,
+ * ancho natural según aspect-ratio de la imagen, y los "tall" ocupan dos filas.
  */
-$retMosaicCell = static function (int $idx, int $total): array {
-    if ($total < 1) {
-        return ['style' => '', 'mod' => 'ret-mosaic--wide'];
-    }
-    $rem       = $total % 4;
-    $tailStart = $rem === 0 ? $total : ($total - $rem);
+$retMasonryMod = static function (int $idx): string {
+    $pattern = ['wide', 'tall', 'half', 'wide', 'half', 'tall'];
 
-    if ($idx >= $tailStart && $rem > 0) {
-        $local   = $idx - $tailStart;
-        $rowBase = (int) (floor($tailStart / 4) * 3) + 1;
-
-        if ($rem === 1) {
-            return [
-                'style' => 'grid-column:1 / span 2; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-        if ($rem === 2) {
-            $col = $local === 0 ? 1 : 2;
-
-            return [
-                'style' => 'grid-column:' . $col . '; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-        // $rem === 3
-        if ($local === 0) {
-            return [
-                'style' => 'grid-column:1 / span 2; grid-row:' . $rowBase . ';',
-                'mod'   => 'ret-mosaic--wide',
-            ];
-        }
-
-        return [
-            'style' => 'grid-column:' . ($local === 1 ? 1 : 2) . '; grid-row:' . ($rowBase + 1) . ';',
-            'mod'   => 'ret-mosaic--half',
-        ];
-    }
-
-    $pos  = $idx % 4;
-    $row0 = (int) (floor($idx / 4) * 3) + 1;
-
-    if ($pos === 0) {
-        return ['style' => 'grid-column:1; grid-row:' . $row0 . ';', 'mod' => 'ret-mosaic--wide'];
-    }
-    if ($pos === 1) {
-        return ['style' => 'grid-column:2; grid-row:' . $row0 . ' / span 2;', 'mod' => 'ret-mosaic--tall'];
-    }
-    if ($pos === 2) {
-        return ['style' => 'grid-column:1; grid-row:' . ($row0 + 1) . ' / span 2;', 'mod' => 'ret-mosaic--tall'];
-    }
-
-    return ['style' => 'grid-column:2; grid-row:' . ($row0 + 2) . ';', 'mod' => 'ret-mosaic--wide'];
+    return 'ret-hmasonry__item--' . $pattern[$idx % count($pattern)];
 };
-
-$galleryVisible = 8;
 ?>
 
 <!-- 1. Hero — editorial: solo título + CTA, sin subtítulo redundante -->
@@ -113,7 +61,8 @@ $galleryVisible = 8;
                 ['label' => 'Inicio', 'url' => base_url('/')],
                 ['label' => 'Retratos', 'url' => null],
             ],
-            'nmzHeroTitle' => 'Retratos personalizados',
+            'nmzHeroTitle'    => 'Retratos personalizados',
+            'nmzHeroSubtitle' => 'Óleo · Acuarela · Digital',
         ]) ?>
         <a href="<?= esc(base_url('retratos/configurador')) ?>" class="btn btn-nmz btn-lg ret-hero__cta">
             Configura tu retrato
@@ -148,13 +97,11 @@ $galleryVisible = 8;
     </div>
 </section>
 
-<!-- 3. Estilos — carrusel en panel editorial (marquee suave, pausa al hover) -->
+<!-- 3. Estilos — cuadrícula fija (todos los estilos a la vista, sin scroll horizontal) -->
 <section class="ret-section ret-section--styles" id="estilos">
     <div class="container">
         <h2 class="section-title text-center ret-styles-heading">Estilos disponibles</h2>
-        <div class="ret-styles-showcase">
-        <div class="ret-styles-carousel-wrap" aria-label="Estilos de retrato — carrusel automático">
-        <div class="ret-styles-carousel" id="stylesCarousel">
+        <div class="ret-styles-grid">
             <?php foreach ($styles as $i => $style) :
                 $slug = strtolower((string) ($style['slug'] ?? ''));
                 if (isset($styleImageOverrides[$slug])) {
@@ -165,7 +112,7 @@ $galleryVisible = 8;
                     $img = base_url('uploads/retratos/clientes/Alba_Méndez.jpg');
                 }
             ?>
-            <article class="ret-style-card">
+            <article class="ret-style-card" data-aos="fade-up" data-aos-delay="<?= ($i % 3) * 80 ?>">
                 <div class="ret-style-card__img">
                     <img src="<?= esc($img, 'attr') ?>" alt="<?= esc($style['name'] ?? 'Estilo', 'attr') ?>" loading="lazy" decoding="async">
                 </div>
@@ -180,8 +127,6 @@ $galleryVisible = 8;
             </article>
             <?php endforeach; ?>
         </div>
-        </div>
-        </div>
     </div>
 </section>
 
@@ -193,25 +138,29 @@ $galleryVisible = 8;
         <?php if (empty($galleryImages)) : ?>
         <p class="text-center text-muted mb-0">Las fotos de la galería se cargan desde la carpeta <code>public/uploads/retratos/fotosretratos</code> (copia aquí el contenido de tu carpeta de retratos).</p>
         <?php else : ?>
-        <div class="ret-grid-gallery" id="retratosGallery">
-            <?php foreach ($galleryImages as $idx => $gi) :
-                $src    = base_url('uploads/retratos/fotosretratos/' . rawurlencode($gi['file']));
-                $hidden = $idx >= $galleryVisible ? ' ret-grid-gallery__item--hidden' : '';
-                $cell   = $retMosaicCell($idx, $galleryTotal);
-            ?>
-            <a href="<?= esc($src, 'attr') ?>" class="glightbox ret-grid-gallery__item <?= esc($cell['mod']) ?><?= $hidden ?>" style="<?= esc($cell['style'], 'attr') ?>" data-gallery="retratos" data-glightbox="title: <?= esc($gi['label'], 'attr') ?>">
-                <img src="<?= esc($src, 'attr') ?>" alt="Retrato de <?= esc($gi['label'], 'attr') ?>" loading="lazy" decoding="async">
-            </a>
-            <?php endforeach; ?>
-        </div>
+        <div class="ret-hmasonry" data-hmasonry role="region" aria-label="Galería de retratos realizados">
+            <div class="ret-hmasonry__track" id="retratosGallery" tabindex="0">
+                <?php foreach ($galleryImages as $idx => $gi) :
+                    $src = base_url('uploads/retratos/fotosretratos/' . rawurlencode($gi['file']));
+                    $mod = $retMasonryMod($idx);
+                ?>
+                <a
+                    href="<?= esc($src, 'attr') ?>"
+                    class="glightbox ret-hmasonry__item <?= esc($mod) ?>"
+                    data-gallery="retratos"
+                    data-glightbox="title: <?= esc($gi['label'], 'attr') ?>"
+                >
+                    <img src="<?= esc($src, 'attr') ?>" alt="Retrato de <?= esc($gi['label'], 'attr') ?>" loading="lazy" decoding="async">
+                </a>
+                <?php endforeach; ?>
+            </div>
 
-        <?php if (count($galleryImages) > $galleryVisible) : ?>
-        <div class="text-center mt-4">
-            <button type="button" class="btn btn-outline-nmz" id="galleryToggle" data-label-more="Ver todos los retratos" data-label-less="Ver menos">
-                Ver todos los retratos <span class="ret-gallery-count">(<?= count($galleryImages) ?>)</span>
-            </button>
+            <div class="ret-hmasonry__more">
+                <button type="button" class="btn btn-nmz-outline" data-hmasonry-more aria-controls="retratosGallery">
+                    Ver más <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
-        <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
@@ -330,10 +279,9 @@ $galleryVisible = 8;
 <?= $this->endSection() ?>
 
 <?= $this->section('extra_js') ?>
-<script src="<?= base_url('assets/js/retratos-carousel.js') ?>"></script>
+<script src="<?= base_url('assets/js/gallery-carousel.js') ?>"></script>
 <script>
 (function () {
-    /* Hero: from() deja opacity:0 hasta animar; fromTo + reduced motion evita CTA “invisible” */
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (typeof gsap !== 'undefined' && !reduceMotion) {
         gsap.fromTo(
@@ -346,30 +294,6 @@ $galleryVisible = 8;
             { opacity: 0, y: 15 },
             { opacity: 1, y: 0, duration: 0.5, delay: 0.4, ease: 'power3.out' }
         );
-    }
-
-    /* Gallery — toggle hidden items */
-    var toggleBtn = document.getElementById('galleryToggle');
-    var gallery = document.getElementById('retratosGallery');
-    if (toggleBtn && gallery) {
-        var expanded = false;
-        var labelMore = toggleBtn.getAttribute('data-label-more') || 'Ver todos los retratos';
-        var labelLess = toggleBtn.getAttribute('data-label-less') || 'Ver menos';
-        var total = gallery.querySelectorAll('.ret-grid-gallery__item').length;
-        toggleBtn.addEventListener('click', function () {
-            expanded = !expanded;
-            gallery.classList.toggle('ret-grid-gallery--expanded', expanded);
-            if (expanded) {
-                toggleBtn.textContent = labelLess;
-            } else {
-                toggleBtn.innerHTML = labelMore + ' <span class="ret-gallery-count">(' + total + ')</span>';
-            }
-        });
-    }
-
-    /* GLightbox */
-    if (typeof GLightbox !== 'undefined') {
-        GLightbox({ selector: '.glightbox' });
     }
 })();
 </script>

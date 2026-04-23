@@ -70,8 +70,8 @@
                     <img src="<?= esc($svcImgUrl, 'attr') ?>" alt="<?= esc($svc['title']) ?>" loading="lazy" decoding="async">
                 </div>
                 <div class="svc-card__body">
-                    <span class="svc-card__tag"><?= esc($svc['tag']) ?></span>
                     <h3 class="svc-card__title"><?= esc($svc['title']) ?></h3>
+                    <span class="svc-card__tag"><?= esc($svc['tag']) ?></span>
                     <p class="svc-card__desc"><?= esc($svc['desc']) ?></p>
                     <ul class="svc-card__pills">
                         <?php foreach ($svc['pills'] as $pill) : ?>
@@ -291,6 +291,9 @@ if (is_file($aboutInicioPath)) {
                         <div class="col-12">
                             <label for="home_message" class="form-label">Mensaje</label>
                             <textarea class="form-control" id="home_message" name="message" rows="4" required><?= esc(old('message') ?? '') ?></textarea>
+                        </div>
+                        <div class="col-12">
+                            <?= view('partials/captcha') ?>
                         </div>
                         <div class="col-12 pt-2">
                             <button type="submit" class="btn btn-nmz btn-lg">

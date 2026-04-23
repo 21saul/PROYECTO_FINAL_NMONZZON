@@ -1,0 +1,10 @@
+# Tareas programadas nmzonzzon Studio (desarrollo DDEV).
+# Formato: minuto hora día-mes mes día-semana usuario comando
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Cada 30 minutos: procesa scheduled_tasks (recordatorio admin reservas Arte en vivo pendientes).
+*/30 * * * * ddev cd /var/www/html && /usr/bin/php spark cron:process-scheduled >> /tmp/nmz-cron-scheduled.log 2>&1
+
+# Día 1 de cada mes a las 09:00: campaña de fidelización por email a clientes inactivos 3+ meses.
+0 9 1 * * ddev cd /var/www/html && /usr/bin/php spark cron:loyalty-send >> /tmp/nmz-cron-loyalty.log 2>&1

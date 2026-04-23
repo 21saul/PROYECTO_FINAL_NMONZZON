@@ -31,21 +31,17 @@ foreach ($items as $item) { $itemCount += (int) ($item['quantity'] ?? 1); }
 
 <?= $this->section('content') ?>
 
-<section
-    class="page-hero page-hero--tall"
-    style="background-image: url('<?= esc(base_url('uploads/retratos/estilos/estilo_color_sin_caras.jpg'), 'attr') ?>');"
->
-    <div class="page-hero-overlay" style="background: linear-gradient(180deg, rgba(26,26,26,.55) 0%, rgba(26,26,26,.82) 100%);"></div>
-    <div class="container page-hero-content text-center py-5">
-        <?= view('partials/nmz-hero-heading', [
-            'nmzHeroCrumbs' => [
-                ['label' => 'Inicio', 'url' => base_url('/')],
-                ['label' => 'Carrito', 'url' => null],
-            ],
-            'nmzHeroTitle' => 'Carrito',
-        ]) ?>
+<section class="nmz-page-header py-4 border-bottom bg-white">
+    <div class="container">
+        <nav class="nmz-hero-crumbs nmz-hero-crumbs--on-light nmz-hero-crumbs--align-start" aria-label="Migas de pan">
+            <ol class="nmz-hero-crumbs__list">
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('/'), 'attr') ?>">Inicio</a></li>
+                <li class="nmz-hero-crumbs__item"><span aria-current="page">Carrito</span></li>
+            </ol>
+        </nav>
+        <h1 class="nmz-page-hero__title nmz-page-hero__title--on-light mt-2">Carrito</h1>
         <?php if ($itemCount > 0) : ?>
-        <p class="text-white-50 small text-uppercase mb-0 mt-2" style="letter-spacing: 0.12em;">
+        <p class="text-secondary small text-uppercase mb-0 mt-2" style="letter-spacing: 0.12em;">
             <?= (int) $itemCount ?> <?= $itemCount === 1 ? 'artículo' : 'artículos' ?>
         </p>
         <?php endif; ?>

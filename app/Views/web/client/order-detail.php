@@ -69,21 +69,17 @@ $orderId = (int) ($order['id'] ?? 0);
 
 <?= $this->section('content') ?>
 
-<section
-    class="page-hero"
-    style="background-image: url('<?= esc(nmz_mi_cuenta_hero_bg_url(), 'attr') ?>');"
->
-    <div class="page-hero-overlay"></div>
-    <div class="container page-hero-content py-4 text-center">
-        <?= view('partials/nmz-hero-heading', [
-            'nmzHeroCrumbs' => [
-                ['label' => 'Inicio', 'url' => base_url('/')],
-                ['label' => 'Mi cuenta', 'url' => base_url('mi-cuenta')],
-                ['label' => 'Mis pedidos', 'url' => base_url('mi-cuenta/pedidos')],
-                ['label' => 'Pedido ' . $on, 'url' => null],
-            ],
-            'nmzHeroTitle' => 'Pedido ' . $on,
-        ]) ?>
+<section class="nmz-page-header py-4 border-bottom bg-white">
+    <div class="container">
+        <nav class="nmz-hero-crumbs nmz-hero-crumbs--on-light nmz-hero-crumbs--align-start" aria-label="Migas de pan">
+            <ol class="nmz-hero-crumbs__list">
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('/'), 'attr') ?>">Inicio</a></li>
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('mi-cuenta'), 'attr') ?>">Mi cuenta</a></li>
+                <li class="nmz-hero-crumbs__item"><a href="<?= esc(base_url('mi-cuenta/pedidos'), 'attr') ?>">Mis pedidos</a></li>
+                <li class="nmz-hero-crumbs__item"><span aria-current="page">Pedido <?= esc($on) ?></span></li>
+            </ol>
+        </nav>
+        <h1 class="nmz-page-hero__title nmz-page-hero__title--on-light mt-2">Pedido <?= esc($on) ?></h1>
     </div>
 </section>
 

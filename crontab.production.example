@@ -1,0 +1,8 @@
+# Ejemplo de crontab para producción (usuario del sitio, rutas reales).
+# Copiar y ajustar /ruta/al/proyecto y la ruta de PHP; instalar con: crontab -e
+#
+# SHELL=/bin/bash
+# PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+#
+# */30 * * * * cd /ruta/al/proyecto && /usr/bin/php spark cron:process-scheduled >> /var/log/nmz-scheduled.log 2>&1
+# 0 9 1 * * cd /ruta/al/proyecto && /usr/bin/php spark cron:loyalty-send >> /var/log/nmz-loyalty.log 2>&1
