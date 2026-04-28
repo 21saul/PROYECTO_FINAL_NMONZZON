@@ -96,18 +96,13 @@ $introImgUrl = base_url($introImg);
                         eventos especiales. Trabajo con materiales adaptados al espacio y al ritmo del evento, cuidando
                         la iluminación y la comodidad de cada persona.
                     </p>
-                    <blockquote class="blockquote-nmz mb-0">
+                    <blockquote class="blockquote-nmz mb-4">
                         Una experiencia memorable y piezas únicas que reflejan la energía del día.
                     </blockquote>
-                </div>
-            </div>
-        </div>
-
-        <div class="row justify-content-center mt-5">
-            <div class="col-lg-10 text-center" data-aos="fade-up">
-                <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="#reservar" class="btn btn-nmz btn-lg px-4">Reserva tu evento</a>
-                    <a href="#galeria" class="btn btn-nmz-outline btn-lg px-4">Ver galería</a>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#reservar" class="btn btn-nmz btn-lg px-4">Reserva tu evento</a>
+                        <a href="#galeria" class="btn btn-nmz-outline btn-lg px-4">Ver galería</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,7 +136,6 @@ $introImgUrl = base_url($introImg);
             <?php endforeach; ?>
         </div>
         <div class="liveart-process-cta text-center mt-5" data-aos="fade-up">
-            <p class="lead mb-3">¿Listo para convertir tu celebración en una experiencia artística única?</p>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 <a href="#reservar" class="btn btn-nmz btn-lg px-4">
                     <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Reserva ahora
@@ -218,7 +212,6 @@ $introImgUrl = base_url($introImg);
                 </button>
             </div>
         </div>
-        <p class="text-center mt-3 text-muted">* Ejemplo real de una boda celebrada en Vigo.</p>
         <?php endif; ?>
     </div>
 </section>
