@@ -23,12 +23,19 @@ $featuredImages = $featured_live_art_images ?? null;
 $liveArtGalleryImages = $liveArtGalleryImages ?? [];
 
 /**
- * Patrón de tamaños para el carrusel masonry horizontal.
- * Repite la secuencia wide (apaisada) → tall (vertical, 2 filas) → half (cuadrada)
- * para que el track alterne alturas y produzca el efecto masonry horizontal.
+ * Patrón Tetris para el carrusel masonry horizontal.
+ * Mismas 4 piezas que la galería de Retratos (big/wide/tall/small) pero con
+ * un orden distinto para variar el ritmo visual. El grid (auto-flow:column
+ * dense) rellena cualquier hueco automáticamente: imposible que aparezcan
+ * espacios en blanco.
  */
 $liveMasonryMod = static function (int $idx): string {
-    $pattern = ['wide', 'tall', 'half', 'wide', 'half', 'tall'];
+    $pattern = [
+        'wide',  'small', 'small', 'big',
+        'tall',  'wide',  'wide',  'tall',
+        'big',   'small', 'small', 'wide',
+        'tall',  'tall',  'small', 'small',
+    ];
 
     return 'ret-hmasonry__item--' . $pattern[$idx % count($pattern)];
 };

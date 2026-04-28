@@ -40,9 +40,9 @@ $resolveUpload = static function (string $rel) use ($placeholderUrl): string {
     return base_url($enc) . '?v=' . filemtime($path);
 };
 
-$heroBgRel = 'assets/images/diseno/diseno-landing-hero-bg.png';
+$heroBgRel  = 'uploads/diseno/Andrea_Mara.jpg';
 $heroBgPath = FCPATH . $heroBgRel;
-$heroBg = base_url($heroBgRel);
+$heroBg     = base_url($heroBgRel);
 if (is_file($heroBgPath)) {
     $heroBg .= '?v=' . filemtime($heroBgPath);
 }
@@ -60,26 +60,32 @@ $disenoScope = [
         'icon'  => 'bi-easel2',
         'title' => 'Cartelería',
         'line'  => 'Carteles, flyers y piezas para conciertos, teatro o campañas que necesiten un mensaje visual claro y legible a distancia.',
+        'image' => 'uploads/diseno/diseño.jpg',
+        'tone'  => 'clay',   // terracota
     ],
     [
         'n'     => '02',
         'icon'  => 'bi-bag-heart',
         'title' => 'Diseño textil',
         'line'  => 'Gráficos para camisetas, tote bags y merchandising: archivos listos para imprenta o proveedor, con mimo en tipografía y color.',
+        'image' => 'uploads/diseno/diseno-textil-camiseta-mockup.png',
+        'tone'  => 'sage',   // verde apagado
     ],
     [
         'n'     => '03',
         'icon'  => 'bi-disc',
         'title' => 'Cover art',
         'line'  => 'Portadas y arte para discos o singles: coherencia con el sonido, el nombre del proyecto y el uso en digital e impreso.',
+        'image' => 'uploads/diseno/diseno-agora-quero-skadelos.png',
+        'tone'  => 'ink',    // tinta oscura
     ],
 ];
 ?>
 
 <div class="diseno-page">
 
-<section class="page-hero page-hero--diseno-landing" style="background-image: url('<?= esc($heroBg, 'attr') ?>');">
-    <div class="page-hero-overlay"></div>
+<section class="page-hero page-hero--diseno-landing" style="background-image: url('<?= esc($heroBg, 'attr') ?>'); background-position: center 45%;">
+    <div class="page-hero-overlay" style="background: linear-gradient(180deg, rgba(20,20,20,0.55) 0%, rgba(20,20,20,0.78) 100%);"></div>
     <div class="container page-hero-content text-center">
         <?= view('partials/nmz-hero-heading', [
             'nmzHeroCrumbs' => [
@@ -119,17 +125,27 @@ $disenoScope = [
 
         <div class="diseno-editorial__body">
             <div class="row diseno-services g-4 g-lg-4" data-aos="fade-up" data-aos-delay="40">
-                <?php foreach ($disenoScope as $block) : ?>
+                <?php foreach ($disenoScope as $block) :
+                    $imgUrl = $resolveUpload($block['image']);
+                    $tone   = $block['tone'] ?? 'clay';
+                ?>
                 <div class="col-md-4">
-                    <article class="diseno-service-card h-100">
-                        <div class="diseno-service-card__head">
-                            <span class="diseno-service-card__n" aria-hidden="true"><?= esc($block['n']) ?></span>
-                            <span class="diseno-service-card__icon" aria-hidden="true">
-                                <i class="bi <?= esc($block['icon']) ?>"></i>
-                            </span>
+                    <article class="diseno-service-card diseno-service-card--v2 diseno-service-card--tone-<?= esc($tone) ?> h-100">
+                        <div class="diseno-service-card__visual" aria-hidden="true">
+                            <img class="diseno-service-card__visual-img" src="<?= esc($imgUrl, 'attr') ?>" alt="" loading="lazy" decoding="async">
+                            <span class="diseno-service-card__visual-tone"></span>
+                            <span class="diseno-service-card__n diseno-service-card__n--overlay"><?= esc($block['n']) ?></span>
                         </div>
-                        <h3 class="diseno-service-card__title"><?= esc($block['title']) ?></h3>
-                        <p class="diseno-service-card__text mb-0"><?= esc($block['line']) ?></p>
+                        <div class="diseno-service-card__body">
+                            <div class="diseno-service-card__head">
+                                <span class="diseno-service-card__icon" aria-hidden="true">
+                                    <i class="bi <?= esc($block['icon']) ?>"></i>
+                                </span>
+                                <span class="diseno-service-card__tag"><?= esc($block['title']) ?></span>
+                            </div>
+                            <h3 class="diseno-service-card__title"><?= esc($block['title']) ?></h3>
+                            <p class="diseno-service-card__text mb-0"><?= esc($block['line']) ?></p>
+                        </div>
                     </article>
                 </div>
                 <?php endforeach; ?>

@@ -93,9 +93,6 @@
     <!-- ENLACE FLOTANTE A WHATSAPP (LOGO) -->
     <?= $this->include('partials/chatbot') ?>
 
-    <!-- ENLACE VOLVER ARRIBA -->
-    <a href="#" class="back-to-top" id="backToTop"><i class="bi bi-chevron-up"></i></a>
-
     <!-- Modal de oferta de bienvenida (auto-open 1ª visita en sesión) -->
     <?= $this->include('partials/offer-banner') ?>
 

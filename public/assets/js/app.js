@@ -249,3 +249,4 @@ function getCsrfData() {
     }
     return { name: '', hash: '' };
 }
+

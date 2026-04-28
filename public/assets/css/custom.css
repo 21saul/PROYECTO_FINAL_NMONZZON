@@ -1,4 +1,4 @@
-/*
+﻿/*
  * =============================================================================
  * ESTILOS: PUBLIC/ASSETS/CSS/CUSTOM.CSS
  * =============================================================================
@@ -5653,27 +5653,30 @@ textarea.form-control-nmz {
     font-weight: 600;
 }
 
-/* Migas sobre fondo claro (detalle sin foto) */
-.nmz-hero-crumbs--on-light .nmz-hero-crumbs__list {
+/* Migas sobre fondo claro (detalle sin foto). El modificador vive en el MISMO
+   <nav> que .nmz-hero-crumbs, por eso usamos selectores compuestos (sin espacio). */
+.nmz-hero-crumbs.nmz-hero-crumbs--on-light .nmz-hero-crumbs__list {
     color: rgba(26, 26, 26, 0.55);
     margin-bottom: 0;
 }
 
-.nmz-hero-crumbs--on-light .nmz-hero-crumbs__item:not(:first-child)::before {
+.nmz-hero-crumbs.nmz-hero-crumbs--on-light .nmz-hero-crumbs__item:not(:first-child)::before {
     color: rgba(26, 26, 26, 0.35);
 }
 
-.nmz-hero-crumbs--on-light .nmz-hero-crumbs a {
-    color: rgba(26, 26, 26, 0.65);
+.nmz-hero-crumbs.nmz-hero-crumbs--on-light a {
+    color: rgba(26, 26, 26, 0.7);
+    text-shadow: none;
 }
 
-.nmz-hero-crumbs--on-light .nmz-hero-crumbs a:hover {
-    color: var(--nmz-accent);
+.nmz-hero-crumbs.nmz-hero-crumbs--on-light a:hover {
+    color: var(--nmz-accent-dark);
 }
 
-.nmz-hero-crumbs--on-light .nmz-hero-crumbs__item span[aria-current='page'] {
+.nmz-hero-crumbs.nmz-hero-crumbs--on-light .nmz-hero-crumbs__item span[aria-current='page'] {
     color: var(--nmz-dark);
     font-weight: 600;
+    text-shadow: none;
 }
 
 /* Título unificado sobre fondo claro (Branding sin hero, etc.) */
@@ -8614,3 +8617,207 @@ h1.nmz-page-hero__title.nmz-page-hero__title--on-light {
     min-width: 12rem;
 }
 
+/* =============================================================================
+ * SERVICE CARDS V2 — REDISEÑO BLOQUE "IDEAS CON FORMA" (sección Diseño)
+ * Cada card ahora lleva una imagen real arriba con un velo de color por tono
+ * (clay / sage / ink) y el número 01-02-03 sobre la imagen. Body separado.
+ * ========================================================================= */
+
+.diseno-service-card.diseno-service-card--v2 {
+    --card-tone-color:    var(--nmz-accent);
+    --card-tone-deep:     var(--nmz-accent-dark);
+    --card-tone-tint:     rgba(201, 169, 110, 0.18);
+    --card-tone-overlay:  rgba(201, 169, 110, 0.28);
+
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    background: var(--nmz-white);
+    border-radius: 18px;
+    border: 1px solid rgba(20, 23, 26, 0.08);
+    box-shadow: 0 4px 22px rgba(20, 23, 26, 0.06);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+}
+
+.diseno-service-card--v2:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-tone-color);
+    box-shadow: 0 18px 38px rgba(20, 23, 26, 0.12);
+}
+
+/* Tonos por tipo de servicio */
+.diseno-service-card--tone-clay {
+    --card-tone-color:    #b8643d;
+    --card-tone-deep:     #8a4a2c;
+    --card-tone-tint:     rgba(184, 100, 61, 0.14);
+    --card-tone-overlay:  rgba(184, 100, 61, 0.30);
+}
+
+.diseno-service-card--tone-sage {
+    --card-tone-color:    #7c8c6c;
+    --card-tone-deep:     #5a6b4d;
+    --card-tone-tint:     rgba(124, 140, 108, 0.14);
+    --card-tone-overlay:  rgba(124, 140, 108, 0.30);
+}
+
+.diseno-service-card--tone-ink {
+    --card-tone-color:    #2a2e33;
+    --card-tone-deep:     #14171a;
+    --card-tone-tint:     rgba(20, 23, 26, 0.10);
+    --card-tone-overlay:  rgba(20, 23, 26, 0.42);
+}
+
+/* Zona visual: imagen con velo de color y número en esquina ------------- */
+.diseno-service-card--v2 .diseno-service-card__visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--card-tone-tint);
+}
+
+.diseno-service-card--v2 .diseno-service-card__visual-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.diseno-service-card--v2:hover .diseno-service-card__visual-img {
+    transform: scale(1.05);
+}
+
+.diseno-service-card--v2 .diseno-service-card__visual-tone {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        140deg,
+        var(--card-tone-overlay) 0%,
+        rgba(255, 255, 255, 0) 55%,
+        var(--card-tone-overlay) 100%
+    );
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.diseno-service-card--v2:hover .diseno-service-card__visual-tone {
+    opacity: 0.75;
+}
+
+.diseno-service-card--v2 .diseno-service-card__n--overlay {
+    position: absolute;
+    top: 0.85rem;
+    left: 1rem;
+    z-index: 2;
+    margin: 0;
+    padding: 0.3rem 0.65rem;
+    font-family: var(--nmz-font-heading), Georgia, serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--nmz-white);
+    background: rgba(20, 23, 26, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    line-height: 1;
+}
+
+/* Body de la card (debajo de la imagen) -------------------------------- */
+.diseno-service-card--v2 .diseno-service-card__body {
+    padding: 1.35rem 1.35rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.diseno-service-card--v2 .diseno-service-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.15rem;
+    justify-content: flex-start;
+}
+
+.diseno-service-card--v2 .diseno-service-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    margin: 0;
+    font-size: 1rem;
+    color: var(--card-tone-color);
+    background: var(--card-tone-tint);
+    border-radius: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.diseno-service-card--v2:hover .diseno-service-card__icon {
+    background: var(--card-tone-color);
+    color: var(--nmz-white);
+}
+
+.diseno-service-card--v2 .diseno-service-card__tag {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--card-tone-deep);
+}
+
+.diseno-service-card--v2 .diseno-service-card__title {
+    margin: 0;
+    font-family: var(--nmz-font-heading), Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.22;
+    color: var(--nmz-black);
+}
+
+.diseno-service-card--v2 .diseno-service-card__text {
+    font-size: 0.94rem;
+    line-height: 1.6;
+    color: var(--nmz-gray, #5c5c5c);
+}
+
+/* Barra de color inferior — refuerza el tono de la card ---------------- */
+.diseno-service-card--v2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--card-tone-color);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.diseno-service-card--v2:hover::after {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .diseno-service-card--v2,
+    .diseno-service-card--v2 .diseno-service-card__visual-img,
+    .diseno-service-card--v2::after {
+        transition: none;
+    }
+    .diseno-service-card--v2:hover {
+        transform: none;
+    }
+    .diseno-service-card--v2:hover .diseno-service-card__visual-img {
+        transform: none;
+    }
+}

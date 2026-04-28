@@ -42,11 +42,22 @@ $hasAnySizes = ! empty($sizesByType['print']) || ! empty($sizesByType['frame']);
 $galleryImages = $galleryImages ?? [];
 
 /**
- * Patrón de tamaños para el carrusel masonry horizontal — altura fija por fila,
- * ancho natural según aspect-ratio de la imagen, y los "tall" ocupan dos filas.
+ * Patrón Tetris para el carrusel masonry horizontal.
+ * 4 piezas que combinan filas y columnas:
+ *   big   = 2x2 (bloque grande)
+ *   wide  = 1x2 (banda horizontal)
+ *   tall  = 2x1 (vertical alta)
+ *   small = 1x1 (cuadrado pequeño)
+ * El grid usa auto-flow:column dense, así que cualquier hueco se rellena
+ * automáticamente y la galería siempre queda compacta sin espacios en blanco.
  */
 $retMasonryMod = static function (int $idx): string {
-    $pattern = ['wide', 'tall', 'half', 'wide', 'half', 'tall'];
+    $pattern = [
+        'big',   'wide',  'small', 'small',
+        'tall',  'tall',  'wide',  'wide',
+        'wide',  'small', 'small', 'big',
+        'tall',  'small', 'small', 'tall',
+    ];
 
     return 'ret-hmasonry__item--' . $pattern[$idx % count($pattern)];
 };
